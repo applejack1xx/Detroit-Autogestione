@@ -1089,215 +1089,258 @@ footer {
         };
         
         // SCRIPT PER LA VOTAZIONE INTERATTIVA CONDIVISA
-        // Riferimento al database per la votazione
-        const voteRef = ref(database, 'votes');
-        const timerRef = ref(database, 'timer');
-        
-        let voteTimer;
-        let countdown = 7; // Cambiato da 10 a 7 secondi
-        const countdownDisplay = document.getElementById('countdown');
-        const timerBar = document.getElementById('timer-bar');
-        const voteButtons = document.querySelectorAll('.button');
-        const votedMessage = document.getElementById('voted-message');
-        const popularChoice = document.getElementById('popular-choice');
-        const choiceSymbol = document.getElementById('choice-symbol');
-        const choicePercentage = document.getElementById('choice-percentage');
-        
-        // Tiene traccia se l'utente ha già votato in questo round
-        let hasVoted = false;
-        
-        // Inizializza i dati di votazione nel database se non esistono
-        get(voteRef).then((snapshot) => {
-            if (!snapshot.exists()) {
-                set(voteRef, {
-                    x: 0,
-                    o: 0,
-                    square: 0,
-                    triangle: 0,
-                    totalVotes: 0,
-                    votingActive: true
-                });
-            }
+// Riferimento al database per la votazione
+const voteRef = ref(database, 'votes');
+const timerRef = ref(database, 'timer');
+
+let voteTimer;
+let countdown = 7; // Durata votazione: 7 secondi
+const countdownDisplay = document.getElementById('countdown');
+const timerBar = document.getElementById('timer-bar');
+const voteButtons = document.querySelectorAll('.button');
+const votedMessage = document.getElementById('voted-message');
+const popularChoice = document.getElementById('popular-choice');
+const choiceSymbol = document.getElementById('choice-symbol');
+const choicePercentage = document.getElementById('choice-percentage');
+
+// Tiene traccia se l'utente ha già votato in questo round
+let hasVoted = false;
+
+// Inizializza i dati di votazione nel database se non esistono
+get(voteRef).then((snapshot) => {
+    if (!snapshot.exists()) {
+        set(voteRef, {
+            x: 0,
+            o: 0,
+            square: 0,
+            triangle: 0,
+            totalVotes: 0,
+            votingActive: true,
+            lastUpdateTime: Date.now()
         });
-        
-        // Inizializza il timer nel database se non esiste
-        get(timerRef).then((snapshot) => {
-            if (!snapshot.exists()) {
-                set(timerRef, {
-                    countdown: 7, // Cambiato da 10 a 7 secondi
-                    lastReset: Date.now()
-                });
-            }
+    }
+});
+
+// Inizializza il timer nel database se non esiste
+get(timerRef).then((snapshot) => {
+    if (!snapshot.exists()) {
+        set(timerRef, {
+            countdown: 7,
+            lastReset: Date.now(),
+            phase: 'voting' // Nuova proprietà per tenere traccia della fase (voting o results)
         });
-        
-        // Funzione per sincronizzare il timer locale con quello del database
-        function syncTimer() {
-            get(timerRef).then((snapshot) => {
-                const timerData = snapshot.val();
-                if (timerData) {
-                    const elapsedTime = Math.floor((Date.now() - timerData.lastReset) / 1000);
-                    countdown = Math.max(0, timerData.countdown - elapsedTime);
-                    countdownDisplay.textContent = countdown;
-                    timerBar.style.width = (countdown / 7 * 100) + '%'; // Cambiato da 10 a 7 secondi
+    }
+});
+
+// Funzione per sincronizzare il timer locale con quello del database
+function syncTimer() {
+    get(timerRef).then((snapshot) => {
+        const timerData = snapshot.val();
+        if (timerData) {
+            const elapsedTime = Math.floor((Date.now() - timerData.lastReset) / 1000);
+            countdown = Math.max(0, timerData.countdown - elapsedTime);
+            countdownDisplay.textContent = countdown;
+            timerBar.style.width = (countdown / 7 * 100) + '%';
+            
+            // Se il timer è scaduto e siamo in fase di votazione, mostra i risultati
+            if (countdown <= 0 && timerData.phase === 'voting') {
+                // Controlla se siamo i primi a notare che il timer è scaduto
+                if (Date.now() - timerData.lastReset > timerData.countdown * 1000) {
+                    // Cambia fase a results e aggiorna il database
+                    update(timerRef, {
+                        phase: 'results',
+                        lastReset: Date.now(),
+                        countdown: 1 // Mostra risultati per 1 secondo
+                    });
                     
-                    // Se il timer è scaduto, attendiamo che qualcuno lo resetti
-                    if (countdown <= 0) {
-                        clearInterval(voteTimer);
-                        
-                        // Se siamo i primi a notare che il timer è scaduto, resettiamolo
-                        if (Date.now() - timerData.lastReset > 7000) { // Cambiato da 10000 a 7000
-                            resetVote();
-                        }
-                    }
+                    // Disattiva la votazione per mostrare i risultati
+                    update(voteRef, { votingActive: false });
                 }
+            }
+            // Se il timer è scaduto e siamo in fase di risultati, avvia un nuovo round
+            else if (countdown <= 0 && timerData.phase === 'results') {
+                // Controlla se siamo i primi a notare che il timer è scaduto
+                if (Date.now() - timerData.lastReset > timerData.countdown * 1000) {
+                    resetVote();
+                }
+            }
+        }
+    });
+}
+
+// Ascolta i cambiamenti nei risultati della votazione
+onValue(voteRef, (snapshot) => {
+    const voteData = snapshot.val();
+    if (voteData) {
+        const total = voteData.totalVotes || 1; // Evita divisione per zero
+        
+        // Calcola le percentuali
+        const xPercent = Math.round((voteData.x / total) * 100) || 0;
+        const oPercent = Math.round((voteData.o / total) * 100) || 0;
+        const squarePercent = Math.round((voteData.square / total) * 100) || 0;
+        const trianglePercent = Math.round((voteData.triangle / total) * 100) || 0;
+        
+        // Aggiorna le UI delle percentuali
+        document.getElementById('x-percentage').textContent = xPercent + '%';
+        document.getElementById('o-percentage').textContent = oPercent + '%';
+        document.getElementById('square-percentage').textContent = squarePercent + '%';
+        document.getElementById('triangle-percentage').textContent = trianglePercent + '%';
+        
+        // Aggiorna le barre di progresso
+        document.getElementById('x-progress').style.width = xPercent + '%';
+        document.getElementById('o-progress').style.width = oPercent + '%';
+        document.getElementById('square-progress').style.width = squarePercent + '%';
+        document.getElementById('triangle-progress').style.width = trianglePercent + '%';
+        
+        // Se la votazione non è attiva, mostra il risultato
+        if (!voteData.votingActive) {
+            // Trova l'opzione con la percentuale più alta
+            const results = [
+                { id: 'x', symbol: '✕', percentage: xPercent },
+                { id: 'o', symbol: '○', percentage: oPercent },
+                { id: 'square', symbol: '□', percentage: squarePercent },
+                { id: 'triangle', symbol: '△', percentage: trianglePercent }
+            ];
+            
+            const winner = results.reduce((max, current) => {
+                return current.percentage > max.percentage ? current : max;
+            }, results[0]);
+            
+            choiceSymbol.textContent = winner.symbol;
+            choicePercentage.textContent = winner.percentage;
+            popularChoice.style.display = 'block';
+            
+            // Disabilita tutti i pulsanti
+            voteButtons.forEach(button => {
+                button.disabled = true;
             });
+        } else {
+            // Riabilita i pulsanti se la votazione è attiva e l'utente non ha votato
+            voteButtons.forEach(button => {
+                button.disabled = hasVoted;
+            });
+            
+            // Nascondi il risultato
+            popularChoice.style.display = 'none';
+        }
+    }
+});
+
+// Ascolta i cambiamenti nel timer
+onValue(timerRef, (snapshot) => {
+    const timerData = snapshot.val();
+    if (timerData) {
+        const elapsedTime = Math.floor((Date.now() - timerData.lastReset) / 1000);
+        countdown = Math.max(0, timerData.countdown - elapsedTime);
+        countdownDisplay.textContent = countdown;
+        timerBar.style.width = (countdown / timerData.countdown * 100) + '%';
+        
+        // Aggiorna l'interfaccia in base alla fase attuale
+        if (timerData.phase === 'voting') {
+            votedMessage.style.display = hasVoted ? 'block' : 'none';
+            popularChoice.style.display = 'none';
+        } else if (timerData.phase === 'results') {
+            popularChoice.style.display = 'block';
         }
         
-        // Ascolta i cambiamenti nei risultati della votazione
-        onValue(voteRef, (snapshot) => {
-            const voteData = snapshot.val();
-            if (voteData) {
-                const total = voteData.totalVotes || 1; // Evita divisione per zero
+        // Se il timer è scaduto, aggiorniamo in base alla fase
+        if (countdown <= 0) {
+            if (timerData.phase === 'voting' && Date.now() - timerData.lastReset > timerData.countdown * 1000 + 500) {
+                // Cambia fase a results
+                update(timerRef, {
+                    phase: 'results',
+                    lastReset: Date.now(),
+                    countdown: 1 // Mostra risultati per 1 secondo
+                });
                 
-                // Calcola le percentuali
-                const xPercent = Math.round((voteData.x / total) * 100) || 0;
-                const oPercent = Math.round((voteData.o / total) * 100) || 0;
-                const squarePercent = Math.round((voteData.square / total) * 100) || 0;
-                const trianglePercent = Math.round((voteData.triangle / total) * 100) || 0;
-                
-                // Aggiorna le UI delle percentuali
-                document.getElementById('x-percentage').textContent = xPercent + '%';
-                document.getElementById('o-percentage').textContent = oPercent + '%';
-                document.getElementById('square-percentage').textContent = squarePercent + '%';
-                document.getElementById('triangle-percentage').textContent = trianglePercent + '%';
-                
-                // Aggiorna le barre di progresso
-                document.getElementById('x-progress').style.width = xPercent + '%';
-                document.getElementById('o-progress').style.width = oPercent + '%';
-                document.getElementById('square-progress').style.width = squarePercent + '%';
-                document.getElementById('triangle-progress').style.width = trianglePercent + '%';
-                
-                // Se la votazione non è attiva, mostra il risultato
-                if (!voteData.votingActive) {
-                    // Trova l'opzione con la percentuale più alta
-                    const results = [
-                        { id: 'x', symbol: '✕', percentage: xPercent },
-                        { id: 'o', symbol: '○', percentage: oPercent },
-                        { id: 'square', symbol: '□', percentage: squarePercent },
-                        { id: 'triangle', symbol: '△', percentage: trianglePercent }
-                    ];
-                    
-                    const winner = results.reduce((max, current) => {
-                        return current.percentage > max.percentage ? current : max;
-                    }, results[0]);
-                    
-                    choiceSymbol.textContent = winner.symbol;
-                    choicePercentage.textContent = winner.percentage;
-                    popularChoice.style.display = 'block';
-                    
-                    // Disabilita tutti i pulsanti
-                    voteButtons.forEach(button => {
-                        button.disabled = true;
-                    });
-                } else {
-                    // Riabilita i pulsanti se la votazione è attiva
-                    voteButtons.forEach(button => {
-                        button.disabled = hasVoted;
-                    });
-                    
-                    // Nascondi il risultato
-                    popularChoice.style.display = 'none';
-                }
+                // Disattiva la votazione
+                update(voteRef, { votingActive: false });
+            } 
+            else if (timerData.phase === 'results' && Date.now() - timerData.lastReset > timerData.countdown * 1000 + 500) {
+                resetVote();
             }
-        });
-        
-       // Ascolta i cambiamenti nel timer
-onValue(timerRef, (snapshot) => {
-  const timerData = snapshot.val();
-  if (timerData) {
-    const elapsedTime = Math.floor((Date.now() - timerData.lastReset) / 1000);
-    countdown = Math.max(0, timerData.countdown - elapsedTime);
-    countdownDisplay.textContent = countdown;
-    timerBar.style.width = (countdown / 7 * 100) + '%'; // Cambiato da 10 a 7 secondi
-    
-    // Se il timer è scaduto, mostra il risultato più popolare
-    if (countdown <= 0 && voteTimer) {
-      clearInterval(voteTimer);
-      
-      // Se siamo i primi a notare che il timer è scaduto, resettiamolo dopo aver mostrato i risultati
-      if (Date.now() - timerData.lastReset > 8000) { // Un po' più di 7 secondi per dare tempo di mostrare i risultati
-        // Disattiva la votazione per mostrare i risultati
-        update(voteRef, { votingActive: false });
-        
-        // Dopo 3 secondi, resetta tutto per un nuovo round di votazioni
-        setTimeout(() => {
-          resetVote();
-        }, 3000);
-      }
+        }
     }
-  }
 });
 
 // Funzione per votare
 function vote(option) {
-  if (hasVoted) return;
-  
-  // Aggiorna il conteggio dei voti usando una transazione
-  const optionRef = ref(database, `votes/${option}`);
-  const totalRef = ref(database, 'votes/totalVotes');
-  
-  transaction(optionRef, (currentVotes) => {
-    return (currentVotes || 0) + 1;
-  });
-  
-  transaction(totalRef, (currentTotal) => {
-    return (currentTotal || 0) + 1;
-  });
-  
-  // Segna l'utente come votante
-  hasVoted = true;
-  votedMessage.style.display = 'block';
-  voteButtons.forEach(button => {
-    button.disabled = true;
-  });
+    if (hasVoted) return;
+    
+    get(timerRef).then((snapshot) => {
+        const timerData = snapshot.val();
+        // Verifica che la fase sia 'voting' e che il timer non sia scaduto
+        if (timerData && timerData.phase === 'voting' && 
+            Date.now() - timerData.lastReset < timerData.countdown * 1000) {
+            
+            // Aggiorna il conteggio dei voti usando una transazione
+            const optionRef = ref(database, `votes/${option}`);
+            const totalRef = ref(database, 'votes/totalVotes');
+            
+            transaction(optionRef, (currentVotes) => {
+                return (currentVotes || 0) + 1;
+            });
+            
+            transaction(totalRef, (currentTotal) => {
+                return (currentTotal || 0) + 1;
+            });
+            
+            // Segna l'utente come votante
+            hasVoted = true;
+            votedMessage.style.display = 'block';
+            voteButtons.forEach(button => {
+                button.disabled = true;
+            });
+        }
+    });
 }
 
 // Funzione per resettare la votazione
 function resetVote() {
-  // Resetta il timer nel database
-  update(timerRef, {
-    countdown: 7, // Cambiato da 10 a 7 secondi
-    lastReset: Date.now()
-  });
-  
-  // Resetta i voti nel database
-  set(voteRef, {
-    x: 0,
-    o: 0,
-    square: 0,
-    triangle: 0,
-    totalVotes: 0,
-    votingActive: true
-  });
-  
-  // Resetta lo stato locale
-  hasVoted = false;
-  countdown = 7; // Cambiato da 10 a 7 secondi
-  countdownDisplay.textContent = countdown;
-  timerBar.style.width = '100%';
-  votedMessage.style.display = 'none';
-  popularChoice.style.display = 'none';
-  
-  // Riabilita i pulsanti
-  voteButtons.forEach(button => {
-    button.disabled = false;
-  });
-  
-  // Avvia un nuovo timer
-  clearInterval(voteTimer);
-  voteTimer = setInterval(() => {
+    // Resetta il timer nel database
+    update(timerRef, {
+        countdown: 7, // Durata votazione: 7 secondi
+        lastReset: Date.now(),
+        phase: 'voting'
+    });
+    
+    // Resetta i voti nel database
+    set(voteRef, {
+        x: 0,
+        o: 0,
+        square: 0,
+        triangle: 0,
+        totalVotes: 0,
+        votingActive: true,
+        lastUpdateTime: Date.now()
+    });
+    
+    // Resetta lo stato locale
+    hasVoted = false;
+    countdown = 7;
+    countdownDisplay.textContent = countdown;
+    timerBar.style.width = '100%';
+    votedMessage.style.display = 'none';
+    popularChoice.style.display = 'none';
+    
+    // Riabilita i pulsanti
+    voteButtons.forEach(button => {
+        button.disabled = false;
+    });
+}
+
+// Gestisci i clic sui pulsanti di voto
+document.getElementById('x-button').addEventListener('click', () => vote('x'));
+document.getElementById('o-button').addEventListener('click', () => vote('o'));
+document.getElementById('square-button').addEventListener('click', () => vote('square'));
+document.getElementById('triangle-button').addEventListener('click', () => vote('triangle'));
+
+// Inizializza il timer quando la pagina si carica
+syncTimer();
+voteTimer = setInterval(() => {
     syncTimer();
-  }, 1000);
+}, 1000);
+
 }
 
 // Gestisci i clic sui pulsanti di voto
