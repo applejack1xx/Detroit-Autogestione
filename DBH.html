@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detroit: Become Human - Votazione Interattiva</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #1a1a2e;
+            color: #fff;
+            min-height: 100vh;
+            background-image: linear-gradient(to bottom, #1a1a2e, #0f0f1a);
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            color: #4cc9f0;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(76, 201, 240, 0.5);
+            letter-spacing: 1px;
+        }
+        
+        h2 {
+            font-size: 1.7rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #f1faee;
+            letter-spacing: 0.5px;
+        }
+        
+        .welcome-message {
+            background-color: rgba(40, 49, 73, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-left: 4px solid #4cc9f0;
+            line-height: 1.6;
+            text-align: justify;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .characters {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .character {
+            text-align: center;
+            margin: 0 15px 20px;
+            transition: transform 0.3s ease;
+        }
+        
+        .character:hover {
+            transform: translateY(-5px);
+        }
+        
+        .character img {
+            width: 140px;
+            height: 170px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 2px solid #4cc9f0;
+            margin-bottom: 0.8rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s ease;
+        }
+        
+        .character img:hover {
+            border-color: #f0c808;
+            transform: scale(1.05);
+        }
+        
+        .character h3 {
+            color: #f1faee;
+            font-size: 1.2rem;
+        }
+        
+        .vote-section {
+            background-color: rgba(40, 49, 73, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+        
+        .vote-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .vote-title {
+            font-size: 1.4rem;
+            color: #4cc9f0;
+            margin-bottom: 0.5rem;
+        }
+        
+        .vote-subtitle {
+            font-size: 1rem;
+            color: #aaa;
+        }
+        
+        .timer-display {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            color: #f0c808;
+        }
+        
+        .timer-bar-container {
+            width: 100%;
+            height: 8px;
+            background-color: #444;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .timer-bar {
+            height: 100%;
+            background: linear-gradient(to right, #4cc9f0, #f0c808);
+            border-radius: 4px;
+            transition: width 0.1s linear;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            max-width: 500px;
+            margin: 0 auto 2rem auto;
+        }
+        
+        .button {
+            background-color: rgba(34, 34, 34, 0.7);
+            border: none;
+            border-radius: 12px;
+            padding: 2rem 1rem;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .button-symbol {
+            font-size: 2.8rem;
+            margin-bottom: 0.8rem;
+        }
+        
+        .button-label {
+            font-size: 1.3rem;
+            margin-bottom: 1.2rem;
+            font-weight: 500;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #444;
+            height: 8px;
+            border-radius: 4px;
+            margin-bottom: 0.8rem;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease-out;
+        }
+        
+        .percentage {
+            font-size: 1rem;
+            font-weight: bold;
+        }
+        
+        .x-button {
+            background: linear-gradient(135deg, #2a4c7d, #3a86ff);
+        }
+        
+        .x-button:hover:not(:disabled) {
+            background: linear-gradient(135deg, #2f5491, #4895ff);
+            transform: translateY(-3px);
+        }
+        
+        .o-button {
+            background: linear-gradient(135deg, #a82432, #e63946);
+        }
+        
+        .o-button:hover:not(:disabled) {
+            background: linear-gradient(135deg, #b62939, #f14b58);
+            transform: translateY(-3px);
+        }
+        
+        .square-button {
+            background: linear-gradient(135deg, #5424a6, #8338ec);
+        }
+        
+        .square-button:hover:not(:disabled) {
+            background: linear-gradient(135deg, #6233bd, #9152f0);
+            transform: translateY(-3px);
+        }
+        
+        .triangle-button {
+            background: linear-gradient(135deg, #048a66, #06d6a0);
+        }
+        
+        .triangle-button:hover:not(:disabled) {
+            background: linear-gradient(135deg, #05a07a, #0be4ad);
+            transform: translateY(-3px);
+        }
+        
+        .message {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 1.2rem;
+            background-color: rgba(40, 49, 73, 0.8);
+            border-radius: 10px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            animation: pulse 2s infinite;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(240, 200, 8, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(240, 200, 8, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(240, 200, 8, 0); }
+        }
+        
+        .voted-message {
+            color: #ffdd00;
+            font-weight: bold;
+        }
+        
+        .popular-choice {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: rgba(40, 49, 73, 0.8);
+            border-radius: 10px;
+            max-width: 500px;
+            margin: 0 auto 2rem auto;
+            border: 2px solid #f0c808;
+            box-shadow: 0 0 20px rgba(240, 200, 8, 0.3);
+        }
+        
+        .popular-choice h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.8rem;
+            color: #f1faee;
+        }
+        
+        .choice-symbol {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #f0c808;
+            margin-bottom: 0.8rem;
+            text-shadow: 0 0 10px rgba(240, 200, 8, 0.5);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 2rem 0;
+            color: #aaa;
+            font-size: 0.9rem;
+            background-color: rgba(15, 15, 26, 0.8);
+            margin-top: 2rem;
+        }
+        
+        .x-bar {
+            background: linear-gradient(to right, #3a86ff, #5e9bff);
+        }
+        
+        .o-bar {
+            background: linear-gradient(to right, #e63946, #f17985);
+        }
+        
+        .square-bar {
+            background: linear-gradient(to right, #8338ec, #a57af2);
+        }
+        
+        .triangle-bar {
+            background: linear-gradient(to right, #06d6a0, #25e9bc);
+        }
+        
+        /* STILI PER LA SEZIONE INTRATTENIMENTO */
+        .entertainment-section {
+            background-color: rgba(40, 49, 73, 0.8);
+            border-radius: 15px;
+            padding: 1.8rem;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+        
+        .entertainment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.2rem;
+        }
+        
+        .entertainment-header h3 {
+            color: #4cc9f0;
+            font-size: 1.5rem;
+            text-shadow: 0 0 5px rgba(76, 201, 240, 0.3);
+        }
+        
+        .entertainment-tabs {
+            display: flex;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #444;
+            flex-wrap: wrap;
+        }
+        
+        .tab {
+            padding: 0.8rem 1.2rem;
+            cursor: pointer;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+            border-radius: 5px 5px 0 0;
+            background-color: rgba(26, 26, 46, 0.7);
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .tab:hover {
+            background-color: rgba(42, 42, 68, 0.8);
+        }
+        
+        .tab.active {
+            background-color: #4cc9f0;
+            color: #1a1a2e;
+            font-weight: bold;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 0.8rem;
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .trivia-item {
+            margin-bottom: 1.2rem;
+            padding: 1rem;
+            background-color: rgba(26, 26, 46, 0.7);
+            border-radius: 8px;
+            border-left: 3px solid #4cc9f0;
+            transition: transform 0.3s ease;
+        }
+        
+        .trivia-item:hover {
+            transform: translateX(5px);
+        }
+        
+        .trivia-question {
+            font-weight: bold;
+            margin-bottom: 0.8rem;
+            color: #f1faee;
+        }
+        
+        .trivia-answer {
+            color: #aaa;
+            font-style: italic;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 0.5rem;
+            border-radius: 4px;
+        }
+        
+        .trivia-answer:hover {
+            background-color: rgba(76, 201, 240, 0.1);
+        }
+        
+        .trivia-answer.revealed {
+            color: #f1faee;
+            background-color: rgba(76, 201, 240, 0.15);
+        }
+        
+        .quote {
+            margin-bottom: 1.2rem;
+            padding: 1rem;
+            background-color: rgba(26, 26, 46, 0.7);
+            border-radius: 8px;
+            font-style: italic;
+            position: relative;
+            border-left: 3px solid #f0c808;
+        }
+        
+        .quote-text {
+            margin-bottom: 0.8rem;
+            position: relative;
+            padding: 0 1.5rem;
+            line-height: 1.6;
+        }
+        
+        .quote-text:before,
+        .quote-text:after {
+            content: '"';
+            font-size: 2rem;
+            color: #4cc9f0;
+            position: absolute;
+        }
+        
+        .quote-text:before {
+            left: 0;
+            top: -10px;
+        }
+        
+        .quote-text:after {
+            right: 0;
+            bottom: -10px;
+        }
+        
+        .quote-character {
+            text-align: right;
+            color: #f0c808;
+            font-weight: bold;
+        }
+        
+        .chat-area {
+            height: 200px;
+            overflow-y: auto;
+            background-color: rgba(26, 26, 46, 0.7);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(76, 201, 240, 0.3);
+        }
+        
+        .chat-message {
+            margin-bottom: 1rem;
+            word-wrap: break-word;
+            animation: slideIn 0.3s;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .user-name {
+            font-weight: bold;
+            color: #4cc9f0;
+        }
+        
+        .chat-input {
+            display: flex;
+        }
+        
+        .chat-input input {
+            flex: 1;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 5px 0 0 5px;
+            background-color: rgba(26, 26, 46, 0.7);
+            color: white;
+            border: 1px solid rgba(76, 201, 240, 0.3);
+            border-right: none;
+        }
+        
+        .chat-input input:focus {
+            outline: none;
+            box-shadow: 0 0 5px rgba(76, 201, 240, 0.5);
+        }
+        
+        .chat-input button {
+            padding: 0.8rem 1.2rem;
+            border: none;
+            border-radius: 0 5px 5px 0;
+            background-color: #4cc9f0;
+            color: #1a1a2e;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .chat-input button:hover {
+            background-color: #3ab4e0;
+        }
+        
+        .mini-poll {
+            background-color: rgba(26, 26, 46, 0.7);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        
+        .mini-poll-question {
+            font-weight: bold;
+            margin-bottom: 1rem;
+            text-align: center;
+            color: #f1faee;
+            font-size: 1.1rem;
+        }
+        
+        .mini-poll-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .mini-poll-option {
+            padding: 0.8rem;
+            background-color: rgba(40, 49, 73, 0.8);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .mini-poll-option:hover {
+            background-color: rgba(52, 67, 99, 0.9);
+            transform: translateY(-2px);
+        }
+        
+        .mini-poll-option.selected {
+            background-color: #4cc9f0;
+            color: #1a1a2e;
+            font-weight: bold;
+            box-shadow: 0 0 10px rgba(76, 201, 240, 0.5);
+        }
+        
+        .mini-poll-results {
+            margin-top: 1rem;
+        }
+        
+        .mini-poll-bar {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.8rem;
+        }
+        
+        .mini-poll-label {
+            width: 50%;
+            padding-right: 1rem;
+        }
+        
+        .mini-poll-progress {
+            width: 50%;
+            height: 15px;
+            background-color: #444;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .mini-poll-fill {
+            height: 100%;
+            background: linear-gradient(to right, #3a86ff, #4cc9f0);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 5px;
+            font-size: 0.7rem;
+            color: #1a1a2e;
+            transition: width 0.5s ease;
+        }
+        
+        /* STILI PER IL CAROSELLO */
+        .carousel-section {
+            max-width: 600px;
+            margin: 0 auto 2rem auto;
+            background-color: rgba(40, 49, 73, 0.8);
+            border-radius: 15px;
+            padding: 1.8rem;
+            overflow: hidden;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+        
+        .carousel-title {
+            color: #4cc9f0;
+            font-size: 1.5rem;
+            text-align: center;
+            margin-bottom: 1.2rem;
+            text-shadow: 0 0 5px rgba(76, 201, 240, 0.3);
+        }
+        
+        .carousel-container {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+
+        }
+        
+        .carousel-track {
+     display: flex;       
+    transition: transform 0.5s ease-in-out; 
+  }
+        
+       
+          .carousel-slide {
+    width: 100%;             
+    height: 300px;            
+    overflow: hidden;       
+}
+
+        
+        
+        .carousel-slide img {
+        width: 100%;          
+    height: auto;        
+    object-fit: cover;  
+        }
+        
+        .carousel-slide::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40%;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+        }
+        
+        .carousel-nav {
+            display: flex;
+            justify-content: center;
+            margin-top: 1.2rem;
+        }
+        
+        .carousel-button {
+            background-color: rgba(26, 26, 46, 0.7);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            font-size: 1.4rem;
+            margin: 0 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+        
+        .carousel-button:hover {
+            background-color: #4cc9f0;
+            color: #1a1a2e;
+            transform: scale(1.1);
+        }
+        
+        .carousel-dots {
+            display: flex;
+            justify-content: center;
+            margin-top: 1.2rem;
+        }
+        
+        .carousel-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: rgba(68, 68, 68, 0.7);
+            margin: 0 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .carousel-dot:hover {
+            background-color: rgba(76, 201, 240, 0.5);
+        }
+        
+        .carousel-dot.active {
+            background-color: #4cc9f0;
+            box-shadow: 0 0 5px rgba(76, 201, 240, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Detroit: Become Human</h1>
+        <h2>Scegli la tua azione</h2>
+        
+        <div class="welcome-message">
+            <p>Benvenuto/a nel laboratorio! Spero che non ti annoierai, ma sappi che DBH è un gioco abbastanza interattivo. Durante lo svolgersi degli eventi dovrai selezionare l'opzione che per te è più appropriata. Alcune decisioni verranno prese molto in fretta e per non causare interruzioni durante la visione, il gioco non verrà messo in pausa salvo casi eccezionali! Sei libero/a di restare quanto vuoi, ma ti chiedo per favore di non fare rumore o disturbare gli altri. Buon divertimento <3</p>
+        </div>
+        
+
+
+        <div class="characters">
+            <div class="character">
+                <img src="Connor.jpg" alt="Connor-RK800">
+                <h3>Connor-RK800</h3>
+            </div>
+            <div class="character">
+                <img src="Markus.jpg" alt="Markus-RK200">
+                <h3>Markus-RK200</h3>
+            </div>
+            <div class="character">
+                <img src="Kara.png" alt="Kara-AX400">
+                <h3>Kara-AX400</h3>
+            </div>
+        </div>
+        
+<div class="welcome-message">
+<h2>Led Androidi</h2>
+<p>Blu: rappresenta calma, concentrazione e pensiero logico. Questo colore appare spesso quando un androide sta elaborando informazioni o prendendo decisioni razionali.
+
+Rosso: indica rabbia, aggressività o un senso di minaccia accresciuto. Quando il LED di un androide si illumina di rosso, significa un potenziale di violenza o conflitto.
+
+Verde: simboleggia speranza, pace e contentezza. Questo colore è spesso visto quando un androide sta vivendo emozioni positive o si sente sicuro.
+
+Giallo: rappresenta paura, ansia o incertezza. Un LED giallo suggerisce che l'androide si sente apprensivo o minacciato</p>
+</div>
+
+ <div class="characters">
+            <div class="character">
+                <img src="blu.jpg" alt="Connor-RK800">
+                <h3>Blu</h3>
+            </div>
+            <div class="character">
+                <img src="red.jpg" alt="Markus-RK200">
+                <h3>Rosso</h3>
+            </div>
+            <div class="character">
+                <img src="yellow.jpg" alt="Kara-AX400">
+                <h3>Giallo</h3>
+            </div>
+        </div>
+        
+        <!-- SEZIONE CAROSELLO -->
+        <div class="carousel-section">
+            <h3 class="carousel-title">Relazioni personaggi</h3>
+            <div class="carousel-container">
+                <div class="carousel-track" id="carousel-track">
+                    <div class="carousel-slide">
+                        <img src="CB.png" alt="Detroit: Become Human - Immagine 1">
+                    </div>
+                    <div class="carousel-slide">
+                        <img src="HN.png" alt="Detroit: Become Human - Immagine 2">
+                    </div>
+                    <div class="carousel-slide">
+                        <img src="HS.png" alt="Detroit: Become Human - Immagine 3">
+                    </div>
+                    <div class="carousel-slide">
+                        <img src="NS.png" alt="Detroit: Become Human - Immagine 4">
+                    </div>
+                    <div class="carousel-slide">
+                        <img src="CN.png" alt="Detroit: Become Human - Immagine 5">
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-nav">
+                <button class="carousel-button" id="prevButton">&#10094;</button>
+                <button class="carousel-button" id="nextButton">&#10095;</button>
+            </div>
+            <div class="carousel-dots" id="carousel-dots">
+                <!-- I punti verranno generati con JavaScript -->
+            </div>
+        </div>
+        
+        <!-- SEZIONE VOTAZIONE -->
+        <div class="vote-section">
+            <div class="vote-header">
+                <div class="vote-title">Votazione Interattiva</div>
+                <div class="vote-subtitle">Scegli la tua azione per influenzare la storia</div>
+            </div>
+            
+            <div class="timer-display">Tempo rimanente: <span id="countdown">10</span> secondi</div>
+            <div class="timer-bar-container">
+                <div id="timer-bar" class="timer-bar" style="width: 100%;"></div>
+            </div>
+            
+            <div class="grid">
+                <button id="x-button" class="button x-button">
+                    <div class="button-symbol">✕</div>
+                    <div class="button-label">Croce</div>
+                    <div class="progress-container">
+                        <div id="x-progress" class="progress-bar x-bar" style="width: 0%;"></div>
+                    </div>
+                    <div id="x-percentage" class="percentage">0%</div>
+                </button>
+                
+                <button id="o-button" class="button o-button">
+                    <div class="button-symbol">○</div>
+                    <div class="button-label">Cerchio</div>
+                    <div class="progress-container">
+                        <div id="o-progress" class="progress-bar o-bar" style="width: 0%;"></div>
+                    </div>
+                    <div id="o-percentage" class="percentage">0%</div>
+                </button>
+                
+                <button id="square-button" class="button square-button">
+                    <div class="button-symbol">□</div>
+                    <div class="button-label">Quadrato</div>
+                    <div class="progress-container">
+                        <div id="square-progress" class="progress-bar square-bar" style="width: 0%;"></div>
+                    </div>
+                    <div id="square-percentage" class="percentage">0%</div>
+                </button>
+                
+                <button id="triangle-button" class="button triangle-button">
+                    <div class="button-symbol">△</div>
+                    <div class="button-label">Triangolo</div>
+                    <div class="progress-container">
+                        <div id="triangle-progress" class="progress-bar triangle-bar" style="width: 0%;"></div>
+                    </div>
+                    <div id="triangle-percentage" class="percentage">0%</div>
+                </button>
+            </div>
+            
+            <div id="voted-message" class="message voted-message" style="display: none;">
+                <p>Hai votato! Potrai votare di nuovo quando inizierà la prossima votazione.</p>
+            </div>
+            
+            <div id="popular-choice" class="popular-choice" style="display: none;">
+                <h3>Scelta più popolare:</h3>
+                <div id="choice-symbol" class="choice-symbol"></div>
+                <p>Con il <span id="choice-percentage">0</span>% dei voti</p>
+            </div>
+        </div>
+        
+        <!-- SEZIONE DI INTRATTENIMENTO -->
+        <div class="entertainment-section">
+            <div class="entertainment-header">
+                <h3>Mentre aspetti...</h3>
+            </div>
+            
+            <div class="entertainment-tabs">
+                <div class="tab active" data-tab="trivia">Curiosità</div>
+                <div class="tab" data-tab="quotes">Citazioni</div>
+                <div class="tab" data-tab="chat">Chat</div>
+                <div class="tab" data-tab="poll">Sondaggio</div>
+            </div>
+            
+            <div class="tab-content active" id="trivia-content">
+                <div class="trivia-item">
+                    <div class="trivia-question">Quanti finali diversi ha Detroit: Become Human?</div>
+                    <div class="trivia-answer" onclick="this.classList.add('revealed')">Ci sono più di 40 finali diversi nel gioco, con variazioni basate sulle scelte fatte durante il gioco.</div>
+                </div>
+                <div class="trivia-item">
+      
+<div class="trivia-question">Chi è l'attore che ha prestato il volto e la voce a Connor?</div>
+                <div class="trivia-answer" onclick="this.classList.add('revealed')">Bryan Dechart ha prestato il volto e la voce a Connor, l'androide investigatore.</div>
+            </div>
+            <div class="trivia-item">
+                <div class="trivia-question">In che anno è ambientato Detroit: Become Human?</div>
+                <div class="trivia-answer" onclick="this.classList.add('revealed')">Il gioco è ambientato nel 2038, in un futuro prossimo in cui gli androidi sono diventati parte della vita quotidiana.</div>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="quotes-content">
+            <div class="quote">
+                <div class="quote-text">Noi siamo liberi, noi siamo vivi!</div>
+                <div class="quote-character">- Markus</div>
+            </div>
+            <div class="quote">
+                <div class="quote-text">Il mio nome è Connor. Sono l'androide inviato dalla CyberLife.</div>
+                <div class="quote-character">- Connor</div>
+            </div>
+            <div class="quote">
+                <div class="quote-text">Alice ha bisogno di me... Devo proteggerla.</div>
+                <div class="quote-character">- Kara</div>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="chat-content">
+            <div class="chat-area" id="chat-area">
+                <!-- I messaggi della chat verranno aggiunti qui con JavaScript -->
+            </div>
+            <div class="chat-input">
+                <input type="text" id="chat-input-field" placeholder="Scrivi un messaggio...">
+                <button id="chat-send-button">Invia</button>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="poll-content">
+            <div class="mini-poll">
+                <div class="mini-poll-question">Chi è il tuo personaggio preferito?</div>
+                <div class="mini-poll-options">
+                    <div class="mini-poll-option" data-option="Connor" onclick="selectMiniPollOption(this)">Connor</div>
+                    <div class="mini-poll-option" data-option="Markus" onclick="selectMiniPollOption(this)">Markus</div>
+                    <div class="mini-poll-option" data-option="Kara" onclick="selectMiniPollOption(this)">Kara</div>
+                    <div class="mini-poll-option" data-option="Altro" onclick="selectMiniPollOption(this)">Altro</div>
+                </div>
+                <div class="mini-poll-results">
+                    <div class="mini-poll-bar">
+                        <div class="mini-poll-label">Connor</div>
+                        <div class="mini-poll-progress">
+                            <div class="mini-poll-fill" id="connor-result" style="width: 45%;">45%</div>
+                        </div>
+                    </div>
+                    <div class="mini-poll-bar">
+                        <div class="mini-poll-label">Markus</div>
+                        <div class="mini-poll-progress">
+                            <div class="mini-poll-fill" id="markus-result" style="width: 30%;">30%</div>
+                        </div>
+                    </div>
+                    <div class="mini-poll-bar">
+                        <div class="mini-poll-label">Kara</div>
+                        <div class="mini-poll-progress">
+                            <div class="mini-poll-fill" id="kara-result" style="width: 20%;">20%</div>
+                        </div>
+                    </div>
+                    <div class="mini-poll-bar">
+                        <div class="mini-poll-label">Altro</div>
+                        <div class="mini-poll-progress">
+                            <div class="mini-poll-fill" id="altro-result" style="width: 5%;">5%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    
+    <footer>
+        <p>Detroit: Become Human © Quantic Dream. Sito non ufficiale Autogestione 2024/2025</p>
+    </footer>
+    
+    <script>
+        // SCRIPT PER IL CAROSELLO
+        const track = document.getElementById('carousel-track');
+        const slides = Array.from(track.children);
+        const nextButton = document.getElementById('nextButton');
+        const prevButton = document.getElementById('prevButton');
+        const dotsContainer = document.getElementById('carousel-dots');
+        
+        const slideWidth = slides[0].getBoundingClientRect().width;
+        
+        // Posiziona le slide una accanto all'altra
+        const setSlidePosition = (slide, index) => {
+            slide.style.left = slideWidth * index + 'px';
+        };
+        slides.forEach(setSlidePosition);
+        
+        // Funzione per spostare alla slide desiderata
+        const moveToSlide = (track, currentSlide, targetSlide) => {
+            track.style.transform = 'translateX(-' + targetSlide.style.left + ')';
+            currentSlide.classList.remove('active');
+            targetSlide.classList.add('active');
+        };
+        
+        // Funzione per aggiornare i pallini
+        const updateDots = (currentDot, targetDot) => {
+            currentDot.classList.remove('active');
+            targetDot.classList.add('active');
+        };
+        
+        // Crea i pallini per la navigazione
+        slides.forEach((_, index) => {
+            const dot = document.createElement('div');
+            dot.classList.add('carousel-dot');
+            if (index === 0) dot.classList.add('active');
+            dot.dataset.index = index;
+            dotsContainer.appendChild(dot);
+        });
+        
+        const dots = Array.from(dotsContainer.children);
+        
+        // Gestione click sui pallini
+        dotsContainer.addEventListener('click', e => {
+            const targetDot = e.target.closest('.carousel-dot');
+            if (!targetDot) return;
+            
+            const currentSlide = track.querySelector('.active');
+            const currentDot = dotsContainer.querySelector('.active');
+            const targetIndex = parseInt(targetDot.dataset.index);
+            const targetSlide = slides[targetIndex];
+            
+            moveToSlide(track, currentSlide || slides[0], targetSlide);
+            updateDots(currentDot, targetDot);
+        });
+        
+        // Next button
+        nextButton.addEventListener('click', () => {
+            const currentSlide = track.querySelector('.active') || slides[0];
+            const currentDot = dotsContainer.querySelector('.active');
+            let nextSlide = currentSlide.nextElementSibling;
+            let nextDot = currentDot.nextElementSibling;
+            
+            if (!nextSlide) {
+                nextSlide = slides[0];
+                nextDot = dots[0];
+            }
+            
+            moveToSlide(track, currentSlide, nextSlide);
+            updateDots(currentDot, nextDot);
+        });
+        
+        // Previous button
+        prevButton.addEventListener('click', () => {
+            const currentSlide = track.querySelector('.active') || slides[0];
+            const currentDot = dotsContainer.querySelector('.active');
+            let prevSlide = currentSlide.previousElementSibling;
+            let prevDot = currentDot.previousElementSibling;
+            
+            if (!prevSlide) {
+                prevSlide = slides[slides.length - 1];
+                prevDot = dots[dots.length - 1];
+            }
+            
+            moveToSlide(track, currentSlide, prevSlide);
+            updateDots(currentDot, prevDot);
+        });
+        
+        // Auto-rotazione del carosello
+        setInterval(() => {
+            nextButton.click();
+        }, 5000);
+        
+        // Imposta la prima slide come attiva
+      
+        slides[0].classList.add('active');
+        // SCRIPT PER LA SEZIONE DI INTRATTENIMENTO
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const target = tab.dataset.tab;
+                
+                // Rimuovi la classe active da tutti i tab e contenuti
+                tabs.forEach(t => t.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                
+                // Aggiungi la classe active al tab cliccato e al contenuto corrispondente
+                tab.classList.add('active');
+                document.getElementById(`${target}-content`).classList.add('active');
+            });
+        });
+        
+        // SCRIPT PER LA CHAT
+        const chatArea = document.getElementById('chat-area');
+        const chatInput = document.getElementById('chat-input-field');
+        const chatSendButton = document.getElementById('chat-send-button');
+        
+        let selectedUsername = '';
+        const usernames = ['Connor_Fan', 'Markus_RK200', 'DetroitLover', 'Android_Friend', 'RealHuman'];
+        
+        // Funzione per aggiungere un messaggio alla chat
+        function addChatMessage(username, message) {
+            const messageEl = document.createElement('div');
+            messageEl.className = 'chat-message';
+            messageEl.innerHTML = `<span class="user-name">${username}:</span> ${message}`;
+            chatArea.appendChild(messageEl);
+            chatArea.scrollTop = chatArea.scrollHeight; // Auto-scroll
+        }
+        
+        // Seleziona un username casuale per l'utente
+        selectedUsername = usernames[Math.floor(Math.random() * usernames.length)];
+        
+        // Crea alcuni messaggi iniziali nella chat
+        const initialMessages = [
+            { username: 'Markus_RK200', message: 'Benvenuti nella chat di Detroit: Become Human!' },
+            { username: 'Connor_Fan', message: 'Non vedo l\'ora di vedere come si svilupperà la storia!' },
+            { username: 'Android_Friend', message: 'Chi preferite tra Connor, Markus e Kara?' }
+        ];
+        
+        initialMessages.forEach(msg => {
+            addChatMessage(msg.username, msg.message);
+        });
+        
+        // Gestione invio messaggi
+        function sendChatMessage() {
+            const message = chatInput.value.trim();
+            if (message) {
+                addChatMessage(selectedUsername, message);
+                chatInput.value = '';
+                
+                // Simulare una risposta dopo un breve ritardo
+                setTimeout(() => {
+                    const responses = [
+                        'Interessante punto di vista!',
+                        'Sono d\'accordo con te.',
+                        'Hai giocato a Detroit: Become Human prima?',
+                        'Quale personaggio preferisci?',
+                        'Le scelte in questo gioco sono davvero importanti!'
+                    ];
+                    const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+                    const randomUsername = usernames.filter(u => u !== selectedUsername)[Math.floor(Math.random() * (usernames.length - 1))];
+                    addChatMessage(randomUsername, randomResponse);
+                }, 1500);
+            }
+        }
+        
+        chatSendButton.addEventListener('click', sendChatMessage);
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendChatMessage();
+            }
+        });
+        
+        // SCRIPT PER IL SONDAGGIO MINI
+        function selectMiniPollOption(option) {
+            // Rimuovi la selezione da tutte le opzioni
+            document.querySelectorAll('.mini-poll-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            
+            // Aggiungi la classe selected all'opzione cliccata
+            option.classList.add('selected');
+            
+            // Aggiorna i risultati casualmente
+            const optionName = option.dataset.option.toLowerCase();
+            const currentValue = parseInt(document.getElementById(`${optionName}-result`).style.width);
+            document.getElementById(`${optionName}-result`).style.width = (currentValue + 5) + '%';
+            document.getElementById(`${optionName}-result`).textContent = (currentValue + 5) + '%';
+            
+            // Aggiorna gli altri risultati
+            const otherOptions = ['connor', 'markus', 'kara', 'altro'].filter(name => name !== optionName);
+            otherOptions.forEach(name => {
+                const value = parseInt(document.getElementById(`${name}-result`).style.width);
+                if (value > 5) {
+                    document.getElementById(`${name}-result`).style.width = (value - 2) + '%';
+                    document.getElementById(`${name}-result`).textContent = (value - 2) + '%';
+                }
+            });
+        }
+        
+        // SCRIPT PER LA VOTAZIONE INTERATTIVA
+        let voteTimer;
+        let countdown;
+        const countdownDisplay = document.getElementById('countdown');
+        const timerBar = document.getElementById('timer-bar');
+        const voteButtons = document.querySelectorAll('.button');
+        const votedMessage = document.getElementById('voted-message');
+        const popularChoice = document.getElementById('popular-choice');
+        const choiceSymbol = document.getElementById('choice-symbol');
+        const choicePercentage = document.getElementById('choice-percentage');
+        
+        // Funzione per resettare la votazione
+        function resetVote() {
+            // Abilita tutti i pulsanti
+            voteButtons.forEach(button => {
+                button.disabled = false;
+            });
+            
+            // Reimposta le percentuali a 0
+            document.getElementById('x-percentage').textContent = '0%';
+            document.getElementById('o-percentage').textContent = '0%';
+            document.getElementById('square-percentage').textContent = '0%';
+            document.getElementById('triangle-percentage').textContent = '0%';
+            
+            // Reimposta le progress bar
+            document.getElementById('x-progress').style.width = '0%';
+            document.getElementById('o-progress').style.width = '0%';
+            document.getElementById('square-progress').style.width = '0%';
+            document.getElementById('triangle-progress').style.width = '0%';
+            
+            // Nascondi i messaggi
+            votedMessage.style.display = 'none';
+            popularChoice.style.display = 'none';
+            
+            // Reimposta il timer
+            countdown =7;
+            countdownDisplay.textContent = countdown;
+            timerBar.style.width = '100%';
+            
+            // Avvia il timer
+            clearInterval(voteTimer);
+            voteTimer = setInterval(updateTimer, 700);
+        }
+        
+        // Funzione per aggiornare il timer
+        function updateTimer() {
+            countdown--;
+            countdownDisplay.textContent = countdown;
+            timerBar.style.width = (countdown / 10 * 100) + '%';
+            
+            if (countdown <= 0) {
+                clearInterval(voteTimer);
+                
+                // Mostra il risultato
+                const results = [
+                    { id: 'x', symbol: '✕', percentage: parseInt(document.getElementById('x-percentage').textContent) },
+                    { id: 'o', symbol: '○', percentage: parseInt(document.getElementById('o-percentage').textContent) },
+                    { id: 'square', symbol: '□', percentage: parseInt(document.getElementById('square-percentage').textContent) },
+                    { id: 'triangle', symbol: '△', percentage: parseInt(document.getElementById('triangle-percentage').textContent) }
+                ];
+                
+                // Trova l'opzione con la percentuale più alta
+                const winner = results.reduce((max, current) => {
+                    return current.percentage > max.percentage ? current : max;
+                }, results[0]);
+                
+                choiceSymbol.textContent = winner.symbol;
+                choicePercentage.textContent = winner.percentage;
+                popularChoice.style.display = 'block';
+                
+                // Disabilita tutti i pulsanti
+                voteButtons.forEach(button => {
+                    button.disabled = true;
+                });
+                
+                // Riparte la votazione dopo 1 secondi
+                setTimeout(resetVote, 1000);
+            }
+        }
+        
+        // Inizializza la votazione
+        resetVote();
+        
+        // Gestione dei click sui pulsanti di voto
+        voteButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                if (button.disabled) return;
+                
+                // Aggiorna casualmente le percentuali
+                const buttonId = button.id.split('-')[0];
+                const otherButtons = ['x', 'o', 'square', 'triangle'].filter(id => id !== buttonId);
+                
+                // Incrementa la percentuale del pulsante cliccato
+                const newPercentage = Math.min(Math.floor(Math.random() * 20) + 50, 100);
+                document.getElementById(`${buttonId}-percentage`).textContent = newPercentage + '%';
+                document.getElementById(`${buttonId}-progress`).style.width = newPercentage + '%';
+                
+                // Distribuisci il resto tra gli altri pulsanti
+                const remainingPercentage = 100 - newPercentage;
+                const otherDistribution = remainingPercentage / otherButtons.length;
+                
+                otherButtons.forEach(otherId => {
+                    const randomVariance = Math.floor(Math.random() * 5) - 2; // Varianza di -2 a +2
+                    const otherValue = Math.max(0, Math.floor(otherDistribution + randomVariance));
+                    document.getElementById(`${otherId}-percentage`).textContent = otherValue + '%';
+                    document.getElementById(`${otherId}-progress`).style.width = otherValue + '%';
+                });
+                
+                // Mostra il messaggio di voto effettuato
+                votedMessage.style.display = 'block';
+                
+                // Disabilita tutti i pulsanti fino alla prossima votazione
+                voteButtons.forEach(btn => {
+                    btn.disabled = true;
+                });
+            });
+        });
+    </script>
+</body>
+</html>
