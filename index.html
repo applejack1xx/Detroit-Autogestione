@@ -809,7 +809,7 @@ footer {
 <script type="module">
   // Importa Firebase correttamente
   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-  import { getDatabase, ref, onValue, push, set, get, update, transaction } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+  import { getDatabase, ref, onValue, push, set, get, update, runTransaction } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
   
   // Configurazione di Firebase
   const firebaseConfig = {
@@ -1301,7 +1301,7 @@ footer {
           const optionRef = ref(database, `votes/${option}`);
           const totalVotesRef = ref(database, 'votes/totalVotes');
           
-          transaction(optionRef, (currentVotes) => {
+          runTransaction(optionRef, (currentVotes) => {
             return (currentVotes || 0) + 1;
           }).then(() => {
             console.log(`Voto per ${option} registrato`);
