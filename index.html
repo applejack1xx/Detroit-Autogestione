@@ -803,34 +803,29 @@ footer {
     <footer>
         <p>Detroit: Become Human © Quantic Dream. Sito non ufficiale Autogestione 2024/2025</p>
     </footer>
-    
-    <!-- Aggiungiamo Firebase per la sincronizzazione in tempo reale -->
-  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js"></script>
+    <script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
+  import { getDatabase, ref, set, get, child} from "https://www.gstatic.com/firebasejs/11.5.0/firebase-database.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
 
-    <script>
-     // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyClBghAz1yY0FI3ujRNfdpO0xSl9Wcvp8Q",
+    authDomain: "detroit-2bd2e.firebaseapp.com",
+    projectId: "detroit-2bd2e",
+    storageBucket: "detroit-2bd2e.firebasestorage.app",
+    messagingSenderId: "875382451791",
+    appId: "1:875382451791:web:277eea38a0306c19f5c43a",
+    measurementId: "G-F8021XS9ED"
+  };
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyClBghAz1yY0FI3ujRNfdpO0xSl9Wcvp8Q",
-  authDomain: "detroit-2bd2e.firebaseapp.com",
-  projectId: "detroit-2bd2e",
-  storageBucket: "detroit-2bd2e.firebasestorage.app",
-  messagingSenderId: "875382451791",
-  appId: "1:875382451791:web:277eea38a0306c19f5c43a",
-  measurementId: "G-F8021XS9ED"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-        
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const database = getDatabase(app);
+</script>
         
         // SCRIPT PER IL CAROSELLO (CORRETTO)
         const slides = document.querySelectorAll('.carousel-slide');
