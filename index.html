@@ -713,8 +713,6 @@
             <p>Benvenuto/a nel laboratorio! Spero che non ti annoierai, ma sappi che DBH è un gioco abbastanza interattivo. Durante lo svolgersi degli eventi dovrai selezionare l'opzione che per te è più appropriata. Alcune decisioni verranno prese molto in fretta e per non causare interruzioni durante la visione, il gioco non verrà messo in pausa salvo casi eccezionali! Sei libero/a di restare quanto vuoi, ma ti chiedo per favore di non fare rumore o disturbare gli altri. Buon divertimento <3</p>
         </div>
         
-
-
         <div class="characters">
             <div class="character">
                 <img src="connor.jpg" alt="Connor-RK800">
@@ -730,18 +728,18 @@
             </div>
         </div>
         
-<div class="welcome-message">
-<h2>Led Androidi</h2>
-<p>Blu: rappresenta calma, concentrazione e pensiero logico. Questo colore appare spesso quando un androide sta elaborando informazioni o prendendo decisioni razionali.
+        <div class="welcome-message">
+            <h2>Led Androidi</h2>
+            <p>Blu: rappresenta calma, concentrazione e pensiero logico. Questo colore appare spesso quando un androide sta elaborando informazioni o prendendo decisioni razionali.
 
-Rosso: indica rabbia, aggressività o un senso di minaccia accresciuto. Quando il LED di un androide si illumina di rosso, significa un potenziale di violenza o conflitto.
+            Rosso: indica rabbia, aggressività o un senso di minaccia accresciuto. Quando il LED di un androide si illumina di rosso, significa un potenziale di violenza o conflitto.
 
-Verde: simboleggia speranza, pace e contentezza. Questo colore è spesso visto quando un androide sta vivendo emozioni positive o si sente sicuro.
+            Verde: simboleggia speranza, pace e contentezza. Questo colore è spesso visto quando un androide sta vivendo emozioni positive o si sente sicuro.
 
-Giallo: rappresenta paura, ansia o incertezza. Un LED giallo suggerisce che l'androide si sente apprensivo o minacciato</p>
-</div>
+            Giallo: rappresenta paura, ansia o incertezza. Un LED giallo suggerisce che l'androide si sente apprensivo o minacciato</p>
+        </div>
 
- <div class="characters">
+        <div class="characters">
             <div class="character">
                 <img src="blu.jpg" alt="Connor-RK800">
                 <h3>Blu</h3>
@@ -760,7 +758,7 @@ Giallo: rappresenta paura, ansia o incertezza. Un LED giallo suggerisce che l'an
         <div class="carousel-section">
             <h3 class="carousel-title">Relazioni personaggi</h3>
             <div class="carousel-container">
-                <div class="carousel-track" id="carousel-track">
+                <div class="carousel-track">
                     <div class="carousel-slide">
                         <img src="CB.png" alt="Detroit: Become Human - Immagine 1">
                     </div>
@@ -867,113 +865,111 @@ Giallo: rappresenta paura, ansia o incertezza. Un LED giallo suggerisce che l'an
                     <div class="trivia-answer" onclick="this.classList.add('revealed')">Ci sono più di 40 finali diversi nel gioco, con variazioni basate sulle scelte fatte durante il gioco.</div>
                 </div>
                 <div class="trivia-item">
-      
-<div class="trivia-question">Chi è l'attore che ha prestato il volto e la voce a Connor?</div>
-                <div class="trivia-answer" onclick="this.classList.add('revealed')">Bryan Dechart ha prestato il volto e la voce a Connor, l'androide investigatore.</div>
-            </div>
-            <div class="trivia-item">
-                <div class="trivia-question">In che anno è ambientato Detroit: Become Human?</div>
-                <div class="trivia-answer" onclick="this.classList.add('revealed')">Il gioco è ambientato nel 2038, in un futuro prossimo in cui gli androidi sono diventati parte della vita quotidiana.</div>
-            </div>
-        </div>
-        
-        <div class="tab-content" id="quotes-content">
-            <div class="quote">
-                <div class="quote-text">Noi siamo liberi, noi siamo vivi!</div>
-                <div class="quote-character">- Markus</div>
-            </div>
-            <div class="quote">
-                <div class="quote-text">Il mio nome è Connor. Sono l'androide inviato dalla CyberLife.</div>
-                <div class="quote-character">- Connor</div>
-            </div>
-            <div class="quote">
-                <div class="quote-text">Alice ha bisogno di me... Devo proteggerla.</div>
-                <div class="quote-character">- Kara</div>
-            </div>
-        </div>
-        
-        <div class="tab-content" id="chat-content">
-            <div class="chat-area" id="chat-area">
-                <!-- I messaggi della chat verranno aggiunti qui con JavaScript -->
-            </div>
-            <div class="chat-input">
-                <input type="text" id="chat-input-field" placeholder="Scrivi un messaggio...">
-                <button id="chat-send-button">Invia</button>
-            </div>
-        </div>
-        
-        <div class="tab-content" id="poll-content">
-            <div class="mini-poll">
-                <div class="mini-poll-question">Chi è il tuo personaggio preferito?</div>
-                <div class="mini-poll-options">
-                    <div class="mini-poll-option" data-option="Connor" onclick="selectMiniPollOption(this)">Connor</div>
-                    <div class="mini-poll-option" data-option="Markus" onclick="selectMiniPollOption(this)">Markus</div>
-                    <div class="mini-poll-option" data-option="Kara" onclick="selectMiniPollOption(this)">Kara</div>
-                    <div class="mini-poll-option" data-option="Altro" onclick="selectMiniPollOption(this)">Altro</div>
+                    <div class="trivia-question">Chi è l'attore che ha prestato il volto e la voce a Connor?</div>
+                    <div class="trivia-answer" onclick="this.classList.add('revealed')">Bryan Dechart ha prestato il volto e la voce a Connor, l'androide investigatore.</div>
                 </div>
-                <div class="mini-poll-results">
-                    <div class="mini-poll-bar">
-                        <div class="mini-poll-label">Connor</div>
-                        <div class="mini-poll-progress">
-                            <div class="mini-poll-fill" id="connor-result" style="width: 45%;">45%</div>
-                        </div>
-                    </div>
-                    <div class="mini-poll-bar">
-                        <div class="mini-poll-label">Markus</div>
-                        <div class="mini-poll-progress">
-                            <div class="mini-poll-fill" id="markus-result" style="width: 30%;">30%</div>
-                        </div>
-                    </div>
-                    <div class="mini-poll-bar">
-                        <div class="mini-poll-label">Kara</div>
-                        <div class="mini-poll-progress">
-                            <div class="mini-poll-fill" id="kara-result" style="width: 20%;">20%</div>
-                        </div>
-                    </div>
-                    <div class="mini-poll-bar">
-                        <div class="mini-poll-label">Altro</div>
-                        <div class="mini-poll-progress">
-                            <div class="mini-poll-fill" id="altro-result" style="width: 5%;">5%</div>
-                        </div>
-                    </div>
+                <div class="trivia-item">
+                    <div class="trivia-question">In che anno è ambientato Detroit: Become Human?</div>
+                    <div class="trivia-answer" onclick="this.classList.add('revealed')">Il gioco è ambientato nel 2038, in un futuro prossimo in cui gli androidi sono diventati parte della vita quotidiana.</div>
                 </div>
             </div>
+            
+            <div class="tab-content" id="quotes-content">
+                <div class="quote">
+                    <div class="quote-text">Noi siamo liberi, noi siamo vivi!</div>
+                    <div class="quote-character">- Markus</div>
+                </div>
+                <div class="quote">
+                    <div class="quote-text">Il mio nome è Connor. Sono l'androide inviato dalla CyberLife.</div>
+                    <div class="quote-character">- Connor</div>
+                </div>
+                <div class="quote">
+                    <div class="quote-text">Alice ha bisogno di me... Devo proteggerla.</div>
+                    <div class="quote-character">- Kara</div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="chat-content">
+                <div class="chat-area" id="chat-area">
+                    <!-- I messaggi della chat verranno aggiunti qui con JavaScript -->
+                </div>
+                <div class="chat-input">
+                    <input type="text" id="chat-input-field" placeholder="Scrivi un messaggio...">
+                    <button id="chat-send-button">Invia</button>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="poll-content">
+                <div class="mini-poll">
+                    <div class="mini-poll-question">Chi è il tuo personaggio preferito?</div>
+                    <div class="mini-poll-options">
+                        <div class="mini-poll-option" data-option="Connor" onclick="selectMiniPollOption(this)">Connor</div>
+                        <div class="mini-poll-option" data-option="Markus" onclick="selectMiniPollOption(this)">Markus</div>
+                        <div class="mini-poll-option" data-option="Kara" onclick="selectMiniPollOption(this)">Kara</div>
+                        <div class="mini-poll-option" data-option="Altro" onclick="selectMiniPollOption(this)">Altro</div>
+                    </div>
+                    <div class="mini-poll-results">
+                        <div class="mini-poll-bar">
+                            <div class="mini-poll-label">Connor</div>
+                            <div class="mini-poll-progress">
+                                <div class="mini-poll-fill" id="connor-result" style="width: 45%;">45%</div>
+                            </div>
+                        </div>
+                        <div class="mini-poll-bar">
+                            <div class="mini-poll-label">Markus</div>
+                            <div class="mini-poll-progress">
+                                <div class="mini-poll-fill" id="markus-result" style="width: 30%;">30%</div>
+                            </div>
+                        </div>
+                        <div class="mini-poll-bar">
+                            <div class="mini-poll-label">Kara</div>
+                            <div class="mini-poll-progress">
+                                <div class="mini-poll-fill" id="kara-result" style="width: 20%;">20%</div>
+                            </div>
+                        </div>
+                        <div class="mini-poll-bar">
+                            <div class="mini-poll-label">Altro</div>
+                            <div class="mini-poll-progress">
+                                <div class="mini-poll-fill" id="altro-result" style="width: 5%;">5%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
     </div>
     
     <footer>
         <p>Detroit: Become Human © Quantic Dream. Sito non ufficiale Autogestione 2024/2025</p>
     </footer>
     
+    <!-- Aggiungiamo Firebase per la sincronizzazione in tempo reale -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/8.10.1/firebase-app.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/8.10.1/firebase-database.min.js"></script>
+    
     <script>
-        // SCRIPT PER IL CAROSELLO
-        const track = document.getElementById('carousel-track');
-        const slides = Array.from(track.children);
+        // Configurazione Firebase (sostituire con le tue credenziali)
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "detroit-become-human-vote.firebaseapp.com",
+            databaseURL: "https://detroit-become-human-vote-default-rtdb.firebaseio.com",
+            projectId: "detroit-become-human-vote",
+            storageBucket: "detroit-become-human-vote.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "1:123456789:web:abcdef123456789"
+        };
+        
+        // Inizializza Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        
+        // SCRIPT PER IL CAROSELLO (CORRETTO)
+        const slides = document.querySelectorAll('.carousel-slide');
         const nextButton = document.getElementById('nextButton');
         const prevButton = document.getElementById('prevButton');
         const dotsContainer = document.getElementById('carousel-dots');
         
-        const slideWidth = slides[0].getBoundingClientRect().width;
-        
-        // Posiziona le slide una accanto all'altra
-        const setSlidePosition = (slide, index) => {
-            slide.style.left = slideWidth * index + 'px';
-        };
-        slides.forEach(setSlidePosition);
-        
-        // Funzione per spostare alla slide desiderata
-        const moveToSlide = (track, currentSlide, targetSlide) => {
-            track.style.transform = 'translateX(-' + targetSlide.style.left + ')';
-            currentSlide.classList.remove('active');
-            targetSlide.classList.add('active');
-        };
-        
-        // Funzione per aggiornare i pallini
-        const updateDots = (currentDot, targetDot) => {
-            currentDot.classList.remove('active');
-            targetDot.classList.add('active');
-        };
+        let currentSlideIndex = 0;
         
         // Crea i pallini per la navigazione
         slides.forEach((_, index) => {
@@ -986,60 +982,57 @@ Giallo: rappresenta paura, ansia o incertezza. Un LED giallo suggerisce che l'an
         
         const dots = Array.from(dotsContainer.children);
         
+        // Funzione per mostrare una slide specifica
+        function showSlide(index) {
+            // Nascondi tutte le slide
+            slides.forEach(slide => {
+                slide.classList.remove('active');
+            });
+            
+            // Rimuovi la classe attiva da tutti i dots
+            dots.forEach(dot => {
+                dot.classList.remove('active');
+            });
+            
+            // Mostra la slide corrente
+            slides[index].classList.add('active');
+            dots[index].classList.add('active');
+            
+            // Aggiorna l'indice corrente
+            currentSlideIndex = index;
+        }
+        
+        // Inizializza mostrando la prima slide
+        showSlide(0);
+        
         // Gestione click sui pallini
         dotsContainer.addEventListener('click', e => {
             const targetDot = e.target.closest('.carousel-dot');
             if (!targetDot) return;
             
-            const currentSlide = track.querySelector('.active');
-            const currentDot = dotsContainer.querySelector('.active');
             const targetIndex = parseInt(targetDot.dataset.index);
-            const targetSlide = slides[targetIndex];
-            
-            moveToSlide(track, currentSlide || slides[0], targetSlide);
-            updateDots(currentDot, targetDot);
+            showSlide(targetIndex);
         });
         
         // Next button
         nextButton.addEventListener('click', () => {
-            const currentSlide = track.querySelector('.active') || slides[0];
-            const currentDot = dotsContainer.querySelector('.active');
-            let nextSlide = currentSlide.nextElementSibling;
-            let nextDot = currentDot.nextElementSibling;
-            
-            if (!nextSlide) {
-                nextSlide = slides[0];
-                nextDot = dots[0];
-            }
-            
-            moveToSlide(track, currentSlide, nextSlide);
-            updateDots(currentDot, nextDot);
+            const nextIndex = (currentSlideIndex + 1) % slides.length;
+            showSlide(nextIndex);
         });
         
         // Previous button
         prevButton.addEventListener('click', () => {
-            const currentSlide = track.querySelector('.active') || slides[0];
-            const currentDot = dotsContainer.querySelector('.active');
-            let prevSlide = currentSlide.previousElementSibling;
-            let prevDot = currentDot.previousElementSibling;
-            
-            if (!prevSlide) {
-                prevSlide = slides[slides.length - 1];
-                prevDot = dots[dots.length - 1];
-            }
-            
-            moveToSlide(track, currentSlide, prevSlide);
-            updateDots(currentDot, prevDot);
+            const prevIndex = (currentSlideIndex - 1 + slides.length) % slides.length;
+            showSlide(prevIndex);
         });
         
         // Auto-rotazione del carosello
         setInterval(() => {
-            nextButton.click();
+            const nextIndex = (currentSlideIndex + 1) % slides.length;
+            showSlide(nextIndex);
         }, 5000);
         
-        // Imposta la prima slide come attiva
-      
-        slides[0].classList.add('active');
+        
         // SCRIPT PER LA SEZIONE DI INTRATTENIMENTO
         const tabs = document.querySelectorAll('.tab');
         const tabContents = document.querySelectorAll('.tab-content');
@@ -1058,25 +1051,38 @@ Giallo: rappresenta paura, ansia o incertezza. Un LED giallo suggerisce che l'an
             });
         });
         
-        // SCRIPT PER LA CHAT
+        // SCRIPT PER LA CHAT CONDIVISA
         const chatArea = document.getElementById('chat-area');
         const chatInput = document.getElementById('chat-input-field');
         const chatSendButton = document.getElementById('chat-send-button');
         
-        let selectedUsername = '';
+        // Genera un ID univoco per l'utente corrente
+        const userId = 'user_' + Math.random().toString(36).substring(2, 9);
+        
+        // Seleziona un username casuale per l'utente
         const usernames = ['Connor_Fan', 'Markus_RK200', 'DetroitLover', 'Android_Friend', 'RealHuman'];
+        const selectedUsername = usernames[Math.floor(Math.random() * usernames.length)];
+        
+        // Riferimento al database per i messaggi di chat
+        const chatRef = database.ref('chat');
         
         // Funzione per aggiungere un messaggio alla chat
-        function addChatMessage(username, message) {
+        function addChatMessage(username, message, isLocal = false) {
             const messageEl = document.createElement('div');
-            messageEl.className = 'chat-message';
+            messageEl.className = 'chat-message' + (isLocal ? ' local-message' : '');
             messageEl.innerHTML = `<span class="user-name">${username}:</span> ${message}`;
             chatArea.appendChild(messageEl);
             chatArea.scrollTop = chatArea.scrollHeight; // Auto-scroll
         }
         
-        // Seleziona un username casuale per l'utente
-        selectedUsername = usernames[Math.floor(Math.random() * usernames.length)];
+        // Ascolta i nuovi messaggi dal database
+        chatRef.limitToLast(20).on('child_added', (snapshot) => {
+            const message = snapshot.val();
+            // Non mostrare di nuovo i messaggi inviati localmente
+            if (message.userId !== userId) {
+                addChatMessage(message.username, message.text);
+            }
+        });
         
         // Crea alcuni messaggi iniziali nella chat
         const initialMessages = [
@@ -1085,30 +1091,36 @@ Giallo: rappresenta paura, ansia o incertezza. Un LED giallo suggerisce che l'an
             { username: 'Android_Friend', message: 'Chi preferite tra Connor, Markus e Kara?' }
         ];
         
-        initialMessages.forEach(msg => {
-            addChatMessage(msg.username, msg.message);
+        // Aggiungi i messaggi iniziali solo se la chat è vuota
+        chatRef.once('value', (snapshot) => {
+            if (!snapshot.exists()) {
+                initialMessages.forEach(msg => {
+                    chatRef.push({
+                        username: msg.username,
+                        text: msg.message,
+                        timestamp: Date.now(),
+                        userId: 'system'
+                    });
+                });
+            }
         });
         
         // Gestione invio messaggi
         function sendChatMessage() {
             const message = chatInput.value.trim();
             if (message) {
-                addChatMessage(selectedUsername, message);
-                chatInput.value = '';
+                // Aggiungi il messaggio localmente
+                addChatMessage(selectedUsername, message, true);
                 
-                // Simulare una risposta dopo un breve ritardo
-                setTimeout(() => {
-                    const responses = [
-                        'Interessante punto di vista!',
-                        'Sono d\'accordo con te.',
-                        'Hai giocato a Detroit: Become Human prima?',
-                        'Quale personaggio preferisci?',
-                        'Le scelte in questo gioco sono davvero importanti!'
-                    ];
-                    const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-                    const randomUsername = usernames.filter(u => u !== selectedUsername)[Math.floor(Math.random() * (usernames.length - 1))];
-                    addChatMessage(randomUsername, randomResponse);
-                }, 1500);
+                // Salva il messaggio nel database
+                chatRef.push({
+                    username: selectedUsername,
+                    text: message,
+                    timestamp: Date.now(),
+                    userId: userId
+                });
+                
+                chatInput.value = '';
             }
         }
         
@@ -1119,8 +1131,47 @@ Giallo: rappresenta paura, ansia o incertezza. Un LED giallo suggerisce che l'an
             }
         });
         
-        // SCRIPT PER IL SONDAGGIO MINI
+        // SCRIPT PER IL SONDAGGIO MINI CONDIVISO
+        // Riferimento al database per i risultati del sondaggio
+        const pollRef = database.ref('miniPoll');
+        
+        // Inizializza i risultati del sondaggio nel database se non esistono
+        pollRef.once('value', (snapshot) => {
+            if (!snapshot.exists()) {
+                pollRef.set({
+                    connor: 45,
+                    markus: 30,
+                    kara: 20,
+                    altro: 5,
+                    totalVotes: 100
+                });
+            }
+        });
+        
+        // Ascolta i cambiamenti nei risultati del sondaggio
+        pollRef.on('value', (snapshot) => {
+            const results = snapshot.val();
+            if (results) {
+                document.getElementById('connor-result').style.width = results.connor + '%';
+                document.getElementById('connor-result').textContent = results.connor + '%';
+                
+                document.getElementById('markus-result').style.width = results.markus + '%';
+                document.getElementById('markus-result').textContent = results.markus + '%';
+                
+                document.getElementById('kara-result').style.width = results.kara + '%';
+                document.getElementById('kara-result').textContent = results.kara + '%';
+                
+                document.getElementById('altro-result').style.width = results.altro + '%';
+                document.getElementById('altro-result').textContent = results.altro + '%';
+            }
+        });
+        
+        // Tiene traccia se l'utente ha già votato nel sondaggio mini
+        let hasVotedMiniPoll = false;
+        
         function selectMiniPollOption(option) {
+            if (hasVotedMiniPoll) return;
+            
             // Rimuovi la selezione da tutte le opzioni
             document.querySelectorAll('.mini-poll-option').forEach(opt => {
                 opt.classList.remove('selected');
@@ -1129,24 +1180,45 @@ Giallo: rappresenta paura, ansia o incertezza. Un LED giallo suggerisce che l'an
             // Aggiungi la classe selected all'opzione cliccata
             option.classList.add('selected');
             
-            // Aggiorna i risultati casualmente
             const optionName = option.dataset.option.toLowerCase();
-            const currentValue = parseInt(document.getElementById(`${optionName}-result`).style.width);
-            document.getElementById(`${optionName}-result`).style.width = (currentValue + 5) + '%';
-            document.getElementById(`${optionName}-result`).textContent = (currentValue + 5) + '%';
             
-            // Aggiorna gli altri risultati
-            const otherOptions = ['connor', 'markus', 'kara', 'altro'].filter(name => name !== optionName);
-            otherOptions.forEach(name => {
-                const value = parseInt(document.getElementById(`${name}-result`).style.width);
-                if (value > 5) {
-                    document.getElementById(`${name}-result`).style.width = (value - 2) + '%';
-                    document.getElementById(`${name}-result`).textContent = (value - 2) + '%';
+            // Aggiorna i risultati nel database
+            pollRef.transaction((currentData) => {
+                if (currentData) {
+                    // Incrementa il voto per l'opzione selezionata
+                    currentData[optionName] += 1;
+                    currentData.totalVotes += 1;
+                    
+                    // Calcola le nuove percentuali
+                    const total = currentData.totalVotes;
+                    currentData.connor = Math.round((currentData.connor / total) * 100);
+                    currentData.markus = Math.round((currentData.markus / total) * 100);
+                    currentData.kara = Math.round((currentData.kara / total) * 100);
+                    currentData.altro = Math.round((currentData.altro / total) * 100);
+                    
+                    // Assicurati che la somma sia 100%
+                    const sum = currentData.connor + currentData.markus + currentData.kara + currentData.altro;
+                    if (sum < 100) {
+                        currentData[optionName] += (100 - sum);
+                    } else if (sum > 100) {
+                        // Trova l'opzione con la percentuale più alta e riducila
+                        const highest = Object.entries(currentData)
+                            .filter(([key]) => ['connor', 'markus', 'kara', 'altro'].includes(key))
+                            .sort(([, a], [, b]) => b - a)[0][0];
+                        currentData[highest] -= (sum - 100);
+                    }
                 }
+                return currentData;
             });
+            
+            hasVotedMiniPoll = true;
         }
         
-        // SCRIPT PER LA VOTAZIONE INTERATTIVA
+        // SCRIPT PER LA VOTAZIONE INTERATTIVA CONDIVISA
+        // Riferimento al database per la votazione
+        const voteRef = database.ref('votes');
+        const timerRef = database.ref('timer');
+        
         let voteTimer;
         let countdown;
         const countdownDisplay = document.getElementById('countdown');
@@ -1157,112 +1229,779 @@ Giallo: rappresenta paura, ansia o incertezza. Un LED giallo suggerisce che l'an
         const choiceSymbol = document.getElementById('choice-symbol');
         const choicePercentage = document.getElementById('choice-percentage');
         
-        // Funzione per resettare la votazione
-        function resetVote() {
-            // Abilita tutti i pulsanti
-            voteButtons.forEach(button => {
-                button.disabled = false;
-            });
-            
-            // Reimposta le percentuali a 0
-            document.getElementById('x-percentage').textContent = '0%';
-            document.getElementById('o-percentage').textContent = '0%';
-            document.getElementById('square-percentage').textContent = '0%';
-            document.getElementById('triangle-percentage').textContent = '0%';
-            
-            // Reimposta le progress bar
-            document.getElementById('x-progress').style.width = '0%';
-            document.getElementById('o-progress').style.width = '0%';
-            document.getElementById('square-progress').style.width = '0%';
-            document.getElementById('triangle-progress').style.width = '0%';
-            
-            // Nascondi i messaggi
-            votedMessage.style.display = 'none';
-            popularChoice.style.display = 'none';
-            
-            // Reimposta il timer
-            countdown =7;
-            countdownDisplay.textContent = countdown;
-            timerBar.style.width = '100%';
-            
-            // Avvia il timer
-            clearInterval(voteTimer);
-            voteTimer = setInterval(updateTimer, 700);
-        }
+        // Tiene traccia se l'utente ha già votato in questo round
+        let hasVoted = false;
         
-        // Funzione per aggiornare il timer
-        function updateTimer() {
-            countdown--;
-            countdownDisplay.textContent = countdown;
-            timerBar.style.width = (countdown / 10 * 100) + '%';
-            
-            if (countdown <= 0) {
-                clearInterval(voteTimer);
-                
-                // Mostra il risultato
-                const results = [
-                    { id: 'x', symbol: '✕', percentage: parseInt(document.getElementById('x-percentage').textContent) },
-                    { id: 'o', symbol: '○', percentage: parseInt(document.getElementById('o-percentage').textContent) },
-                    { id: 'square', symbol: '□', percentage: parseInt(document.getElementById('square-percentage').textContent) },
-                    { id: 'triangle', symbol: '△', percentage: parseInt(document.getElementById('triangle-percentage').textContent) }
-                ];
-                
-                // Trova l'opzione con la percentuale più alta
-                const winner = results.reduce((max, current) => {
-                    return current.percentage > max.percentage ? current : max;
-                }, results[0]);
-                
-                choiceSymbol.textContent = winner.symbol;
-                choicePercentage.textContent = winner.percentage;
-                popularChoice.style.display = 'block';
-                
-                // Disabilita tutti i pulsanti
-                voteButtons.forEach(button => {
-                    button.disabled = true;
+        // Inizializza i dati di votazione nel database se non esistono
+        voteRef.once('value', (snapshot) => {
+            if (!snapshot.exists()) {
+                voteRef.set({
+                    x: 0,
+                    o: 0,
+                    square: 0,
+                    triangle: 0,
+                    totalVotes: 0,
+                    votingActive: true
                 });
-                
-                // Riparte la votazione dopo 1 secondi
-                setTimeout(resetVote, 1000);
             }
+        });
+        
+        // Inizializza il timer nel database se non esiste
+        timerRef.once('value', (snapshot) => {
+            if (!snapshot.exists()) {
+                timerRef.set({
+                    countdown: 10,
+                    lastReset: Date.now()
+                });
+            }
+        });
+        
+        // Funzione per sincronizzare il timer locale con quello del database
+        function syncTimer() {
+            timerRef.once('value', (snapshot) => {
+                const timerData = snapshot.val();
+                if (timerData) {
+                    const elapsedTime = Math.floor((Date.now() - timerData.lastReset) / 1000);
+                    countdown = Math.max(0, timerData.countdown - elapsedTime);
+                    countdownDisplay.textContent = countdown;
+                    timerBar.style.width = (countdown / 10 * 100) + '%';
+                    
+                    // Se il timer è scaduto, attendiamo che qualcuno lo resetti
+                    if (countdown <= 0) {
+                        clearInterval(voteTimer);
+                        
+                        // Se siamo i primi a notare che il timer è scaduto, resettiamolo
+                        if (Date.now() - timerData.lastReset > 10000) {
+                            resetVote();
+                        }
+                    }
+                }
+            });
         }
         
-        // Inizializza la votazione
-        resetVote();
-        
-        // Gestione dei click sui pulsanti di voto
-        voteButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                if (button.disabled) return;
+        // Ascolta i cambiamenti nei risultati della votazione
+        voteRef.on('value', (snapshot) => {
+            const voteData = snapshot.val();
+            if (voteData) {
+                const total = voteData.totalVotes || 1; // Evita divisione per zero
                 
-                // Aggiorna casualmente le percentuali
-                const buttonId = button.id.split('-')[0];
-                const otherButtons = ['x', 'o', 'square', 'triangle'].filter(id => id !== buttonId);
+                // Calcola le percentuali
+                const xPercent = Math.round((voteData.x / total) * 100) || 0;
+                const oPercent = Math.round((voteData.o / total) * 100) || 0;
+                const squarePercent = Math.round((voteData.square / total) * 100) || 0;
+                const trianglePercent = Math.round((voteData.triangle / total) * 100) || 0;
                 
-                // Incrementa la percentuale del pulsante cliccato
-                const newPercentage = Math.min(Math.floor(Math.random() * 20) + 50, 100);
-                document.getElementById(`${buttonId}-percentage`).textContent = newPercentage + '%';
-                document.getElementById(`${buttonId}-progress`).style.width = newPercentage + '%';
+                // Aggiorna le UI delle percentuali
+                document.getElementById('x-percentage').textContent = xPercent + '%';
+                document.getElementById('o-percentage').textContent = oPercent + '%';
+                document.getElementById('square-percentage').textContent = squarePercent + '%';
+                document.getElementById('triangle-percentage').textContent = trianglePercent + '%';
                 
-                // Distribuisci il resto tra gli altri pulsanti
-                const remainingPercentage = 100 - newPercentage;
-                const otherDistribution = remainingPercentage / otherButtons.length;
+                // Aggiorna le barre di progresso
+                document.getElementById('x-progress').style.width = xPercent + '%';
+                document.getElementById('o-progress').style.width = oPercent + '%';
+                document.getElementById('square-progress').style.width = squarePercent + '%';
+                document.getElementById('triangle-progress').style.width = trianglePercent + '%';
                 
-                otherButtons.forEach(otherId => {
-                    const randomVariance = Math.floor(Math.random() * 5) - 2; // Varianza di -2 a +2
-                    const otherValue = Math.max(0, Math.floor(otherDistribution + randomVariance));
-                    document.getElementById(`${otherId}-percentage`).textContent = otherValue + '%';
-                    document.getElementById(`${otherId}-progress`).style.width = otherValue + '%';
-                });
-                
-                // Mostra il messaggio di voto effettuato
-                votedMessage.style.display = 'block';
-                
-                // Disabilita tutti i pulsanti fino alla prossima votazione
-                voteButtons.forEach(btn => {
-                    btn.disabled = true;
-                });
-            });
+                // Se la votazione non è attiva, mostra il risultato
+                if (!voteData.votingActive) {
+                    // Trova l'opzione con la percentuale più alta
+                    const results = [
+                        { id: 'x', symbol: '✕', percentage: xPercent },
+                        { id: 'o', symbol: '○', percentage: oPercent },
+                        { id: 'square', symbol: '□', percentage: squarePercent },
+                        { id: 'triangle', symbol: '△', percentage: trianglePercent }
+                    ];
+                    
+                    const winner = results.reduce((max, current) => {
+                        return current.percentage > max.percentage ? current : max;
+                    }, results[0]);
+                    
+                    choiceSymbol.textContent = winner.symbol;
+                    choicePercentage.textContent = winner.percentage;
+                    popularChoice.style.display = 'block';
+                    
+                    // Disabilita tutti i pulsanti
+                    voteButtons.forEach(button => {
+                        button.disabled = true;
+                    });
+                }
+            }
         });
-    </script>
+        
+        // Ascolta i cambiamenti nel timer
+        timerRef.on('value', (snapshot) => {
+            const timerData = snapshot.val();
+            if (timerData) {
+                const elapsedTime = Math.floor((Date.now() - timerData.lastReset) / 1000);
+                countdown = Math.max(0, timerData.countdown - elapsedTime);
+                countdownDisplay.textContent = countdown;
+                timerBar.style.width = (countdown / 10 * 100) + '%';
+                
+                if (countdown <= 0) {
+                    // Termina la votazione
+                    voteRef.update({ votingActive: false });
+                    
+                    // Mostra il risultato
+                    popularChoice.style.display = 'block';
+                    
+                    // Riparte la votazione dopo 1 secondo
+                    setTimeout(() => {
+                        // Solo un client dovrebbe resettare il voto
+                        if (Math.random() < 0.2) { // 20% di probabilità per evitare conflitti
+                            resetVote();
+                        }
+                    }, 1000);
+                }
+            }
+        });
+        
+        // Funzione per resettare la votazione
+       // Funzione per resettare la votazione
+function resetVote() {
+    // Reimposta il timer
+    timerRef.set({
+        countdown: 10,
+        lastReset: Date.now()
+    });
+    
+    // Reimposta i voti
+    voteRef.set({
+        x: 0,
+        o: 0,
+        square: 0,
+        triangle: 0,
+        totalVotes: 0,
+        votingActive: true
+    });
+    
+    // Nascondi il messaggio di voto e la scelta popolare
+    votedMessage.style.display = 'none';
+    popularChoice.style.display = 'none';
+    
+    // Riabilita i pulsanti
+    voteButtons.forEach(button => {
+        button.disabled = false;
+    });
+    
+    // Reimposta lo stato di voto dell'utente
+    hasVoted = false;
+    
+    // Riavvia il timer locale
+    startLocalTimer();
+}
+
+// Funzione per avviare il timer locale
+function startLocalTimer() {
+    clearInterval(voteTimer);
+    voteTimer = setInterval(() => {
+        countdown--;
+        countdownDisplay.textContent = countdown;
+        timerBar.style.width = (countdown / 10 * 100) + '%';
+        
+        if (countdown <= 0) {
+            clearInterval(voteTimer);
+        }
+    }, 1000);
+}
+
+// Gestione click sui pulsanti di voto
+document.getElementById('x-button').addEventListener('click', () => vote('x'));
+document.getElementById('o-button').addEventListener('click', () => vote('o'));
+document.getElementById('square-button').addEventListener('click', () => vote('square'));
+document.getElementById('triangle-button').addEventListener('click', () => vote('triangle'));
+
+// Funzione per registrare un voto
+function vote(option) {
+    if (hasVoted) return;
+    
+    // Controlla se la votazione è attiva
+    voteRef.once('value', (snapshot) => {
+        const voteData = snapshot.val();
+        if (voteData && voteData.votingActive) {
+            // Registra il voto
+            voteRef.transaction((currentData) => {
+                if (currentData) {
+                    currentData[option]++;
+                    currentData.totalVotes++;
+                }
+                return currentData;
+            });
+            
+            // Mostra il messaggio di conferma
+            votedMessage.style.display = 'block';
+            hasVoted = true;
+        }
+    });
+}
+
+// Inizia la sincronizzazione del timer e avvia il timer locale
+syncTimer();
+startLocalTimer();
+
+// Sincronizza il timer ogni secondo
+setInterval(syncTimer, 1000);
+</script>
+
+<style>
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+h1, h2, h3 {
+    color: #4fc3f7;
+    text-align: center;
+}
+
+h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+h2 {
+    font-size: 1.8rem;
+    margin-top: 0;
+}
+
+.welcome-message {
+    background-color: rgba(0, 0, 0, 0.3);
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+    border-left: 4px solid #4fc3f7;
+}
+
+.characters {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin: 30px 0;
+}
+
+.character {
+    text-align: center;
+    margin: 15px;
+}
+
+.character img {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid #4fc3f7;
+    transition: transform 0.3s;
+}
+
+.character img:hover {
+    transform: scale(1.05);
+}
+
+.character h3 {
+    margin: 10px 0;
+    color: #ffffff;
+}
+
+/* Stili per il carosello */
+.carousel-section {
+    margin: 40px 0;
+    position: relative;
+}
+
+.carousel-title {
+    margin-bottom: 20px;
+}
+
+.carousel-container {
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+.carousel-track {
+    display: flex;
+    transition: transform 0.5s ease;
+}
+
+.carousel-slide {
+    min-width: 100%;
+    opacity: 0;
+    transition: opacity 0.3s;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.carousel-slide.active {
+    opacity: 1;
+    position: relative;
+}
+
+.carousel-slide img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.carousel-nav {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.carousel-button {
+    background-color: #4fc3f7;
+    color: #000;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+    margin: 0 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.carousel-button:hover {
+    background-color: #0288d1;
+}
+
+.carousel-dots {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.carousel-dot {
+    width: 12px;
+    height: 12px;
+    background-color: #555;
+    border-radius: 50%;
+    margin: 0 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.carousel-dot.active {
+    background-color: #4fc3f7;
+}
+
+/* Stili per la sezione di votazione */
+.vote-section {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    padding: 20px;
+    margin: 40px 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+.vote-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.vote-title {
+    font-size: 1.8rem;
+    color: #4fc3f7;
+    margin-bottom: 5px;
+}
+
+.vote-subtitle {
+    font-size: 1rem;
+    color: #a0a0a0;
+}
+
+.timer-display {
+    text-align: center;
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+.timer-bar-container {
+    height: 10px;
+    background-color: #555;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.timer-bar {
+    height: 100%;
+    background-color: #4fc3f7;
+    border-radius: 5px;
+    transition: width 1s linear;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #333;
+    border: none;
+    border-radius: 10px;
+    padding: 15px;
+    color: white;
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.3s;
+}
+
+.button:hover {
+    transform: translateY(-5px);
+}
+
+.button-symbol {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.x-button:hover {
+    background-color: rgba(0, 191, 255, 0.3);
+}
+
+.o-button:hover {
+    background-color: rgba(255, 105, 180, 0.3);
+}
+
+.square-button:hover {
+    background-color: rgba(255, 215, 0, 0.3);
+}
+
+.triangle-button:hover {
+    background-color: rgba(50, 205, 50, 0.3);
+}
+
+.button-label {
+    margin-bottom: 10px;
+}
+
+.progress-container {
+    width: 100%;
+    height: 10px;
+    background-color: #555;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: 5px;
+}
+
+.progress-bar {
+    height: 100%;
+    border-radius: 5px;
+    transition: width 0.3s;
+}
+
+.x-bar {
+    background-color: #00bfff;
+}
+
+.o-bar {
+    background-color: #ff69b4;
+}
+
+.square-bar {
+    background-color: #ffd700;
+}
+
+.triangle-bar {
+    background-color: #32cd32;
+}
+
+.percentage {
+    font-size: 0.9rem;
+    color: #a0a0a0;
+}
+
+.message {
+    text-align: center;
+    margin-top: 20px;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.voted-message {
+    background-color: rgba(0, 128, 0, 0.2);
+    color: #4caf50;
+}
+
+.popular-choice {
+    text-align: center;
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #333;
+    border-radius: 10px;
+}
+
+.choice-symbol {
+    font-size: 3rem;
+    margin: 10px 0;
+}
+
+/* Stili per la sezione di intrattenimento */
+.entertainment-section {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    padding: 20px;
+    margin: 40px 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+.entertainment-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.entertainment-tabs {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    background-color: #333;
+    border-radius: 30px;
+    padding: 5px;
+}
+
+.tab {
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 25px;
+    transition: background-color 0.3s;
+}
+
+.tab.active {
+    background-color: #4fc3f7;
+    color: #000;
+}
+
+.tab-content {
+    display: none;
+    padding: 20px;
+    background-color: #292929;
+    border-radius: 10px;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Stili per le curiosità */
+.trivia-item {
+    margin-bottom: 20px;
+}
+
+.trivia-question {
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #4fc3f7;
+}
+
+.trivia-answer {
+    background-color: #333;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    position: relative;
+    color: transparent;
+    user-select: none;
+}
+
+.trivia-answer::before {
+    content: "Clicca per rivelare";
+    color: #a0a0a0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.trivia-answer.revealed {
+    color: #e0e0e0;
+}
+
+.trivia-answer.revealed::before {
+    content: "";
+}
+
+/* Stili per le citazioni */
+.quote {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #333;
+    border-radius: 5px;
+    border-left: 4px solid #4fc3f7;
+}
+
+.quote-text {
+    font-style: italic;
+    margin-bottom: 10px;
+}
+
+.quote-character {
+    text-align: right;
+    color: #a0a0a0;
+}
+
+/* Stili per la chat */
+.chat-area {
+    height: 300px;
+    overflow-y: auto;
+    background-color: #333;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.chat-message {
+    margin-bottom: 10px;
+    padding: 8px 12px;
+    border-radius: 15px;
+    background-color: #444;
+    max-width: 80%;
+}
+
+.local-message {
+    background-color: #0288d1;
+    color: white;
+    margin-left: auto;
+}
+
+.user-name {
+    font-weight: bold;
+    color: #4fc3f7;
+}
+
+.chat-input {
+    display: flex;
+}
+
+#chat-input-field {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 30px 0 0 30px;
+    background-color: #333;
+    color: #e0e0e0;
+}
+
+#chat-send-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 0 30px 30px 0;
+    background-color: #4fc3f7;
+    color: #000;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#chat-send-button:hover {
+    background-color: #0288d1;
+}
+
+/* Stili per il sondaggio mini */
+.mini-poll {
+    padding: 15px;
+    background-color: #333;
+    border-radius: 5px;
+}
+
+.mini-poll-question {
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-align: center;
+    color: #4fc3f7;
+}
+
+.mini-poll-options {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.mini-poll-option {
+    padding: 8px 15px;
+    background-color: #444;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.mini-poll-option:hover {
+    background-color: #4fc3f7;
+    color: #000;
+}
+
+.mini-poll-option.selected {
+    background-color: #4fc3f7;
+    color: #000;
+}
+
+.mini-poll-results {
+    margin-top: 20px;
+}
+
+.mini-poll-bar {
+    margin-bottom: 10px;
+}
+
+.mini-poll-label {
+    margin-bottom: 5px;
+}
+
+.mini-poll-progress {
+    height: 20px;
+    background-color: #444;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.mini-poll-fill {
+    height: 100%;
+    background-color: #4fc3f7;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    font-size: 0.8rem;
+    transition: width 0.3s;
+}
+
+footer {
+    text-align: center;
+    padding: 20px;
+    margin-top: 40px;
+    background-color: #1a1a1a;
+    color: #a0a0a0;
+}
+
+/* Media queries per dispositivi mobili */
+@media (max-width: 768px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .carousel-slide img {
+        height: auto;
+    }
+    
+    .character img {
+        width: 150px;
+        height: 150px;
+    }
+}
+</style>
 </body>
 </html>
