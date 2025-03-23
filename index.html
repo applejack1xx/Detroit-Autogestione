@@ -619,27 +619,24 @@
             overflow: hidden;
             border-radius: 10px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-
         }
         
         .carousel-track {
-     display: flex;       
-    transition: transform 0.5s ease-in-out; 
-  }
+            display: flex;
+            transition: transform 0.5s ease;
+            height: 100%;
+        }
         
-       
-          .carousel-slide {
-    width: 100%;             
-    height: 300px;            
-    overflow: hidden;       
-}
-
-        
+        .carousel-slide {
+            min-width: 100%;
+            height: 100%;
+            position: relative;
+        }
         
         .carousel-slide img {
-        width: 100%;          
-    height: auto;        
-    object-fit: cover;  
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
         
         .carousel-slide::after {
@@ -720,15 +717,15 @@
 
         <div class="characters">
             <div class="character">
-                <img src="Connor.jpg" alt="Connor-RK800">
+                <img src="connor.jpg" alt="Connor-RK800">
                 <h3>Connor-RK800</h3>
             </div>
             <div class="character">
-                <img src="Markus.jpg" alt="Markus-RK200">
+                <img src="markus.jpg" alt="Markus-RK200">
                 <h3>Markus-RK200</h3>
             </div>
             <div class="character">
-                <img src="Kara.png" alt="Kara-AX400">
+                <img src="kara.png" alt="Kara-AX400">
                 <h3>Kara-AX400</h3>
             </div>
         </div>
