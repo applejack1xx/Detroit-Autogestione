@@ -653,7 +653,7 @@ footer {
                 <div class="vote-subtitle">Scegli la tua azione per influenzare la storia</div>
             </div>
             
-            <div class="timer-display">Tempo rimanente: <span id="countdown">10</span> secondi</div>
+            <div class="timer-display">Tempo rimanente: <span id="countdown">7</span> secondi</div>
             <div class="timer-bar-container">
                 <div id="timer-bar" class="timer-bar" style="width: 100%;"></div>
             </div>
@@ -803,30 +803,29 @@ footer {
     <footer>
         <p>Detroit: Become Human © Quantic Dream. Sito non ufficiale Autogestione 2024/2025</p>
     </footer>
+    
+    <!-- Importa la versione corretta di Firebase con i CDN moduli -->
     <script type="module">
-  // Import the functions you need from the SDKs you need
-  import firebase from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
-import "https://www.gstatic.com/firebasejs/11.5.0/firebase-database.js";
-        // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
+        // Importa Firebase correttamente
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getDatabase, ref, onValue, push, set, get, update, transaction } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
 
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
-    apiKey: "AIzaSyClBghAz1yY0FI3ujRNfdpO0xSl9Wcvp8Q",
-    authDomain: "detroit-2bd2e.firebaseapp.com",
-    projectId: "detroit-2bd2e",
-    storageBucket: "detroit-2bd2e.firebasestorage.app",
-    messagingSenderId: "875382451791",
-    appId: "1:875382451791:web:277eea38a0306c19f5c43a",
-    measurementId: "G-F8021XS9ED"
-  };
+        // Configurazione di Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyClBghAz1yY0FI3ujRNfdpO0xSl9Wcvp8Q",
+            authDomain: "detroit-2bd2e.firebaseapp.com",
+            projectId: "detroit-2bd2e",
+            storageBucket: "detroit-2bd2e.firebasestorage.app",
+            messagingSenderId: "875382451791",
+            appId: "1:875382451791:web:277eea38a0306c19f5c43a",
+            measurementId: "G-F8021XS9ED"
+        };
 
-  // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
-const database = firebase.database();
+        // Inizializza Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
         
-        // SCRIPT PER IL CAROSELLO (CORRETTO)
+        // SCRIPT PER IL CAROSELLO
         const slides = document.querySelectorAll('.carousel-slide');
         const nextButton = document.getElementById('nextButton');
         const prevButton = document.getElementById('prevButton');
@@ -927,7 +926,7 @@ const database = firebase.database();
         const selectedUsername = usernames[Math.floor(Math.random() * usernames.length)];
         
         // Riferimento al database per i messaggi di chat
-        const chatRef = database.ref('chat');
+        const chatRef = ref(database, 'chat');
         
         // Funzione per aggiungere un messaggio alla chat
         function addChatMessage(username, message, isLocal = false) {
@@ -939,11 +938,16 @@ const database = firebase.database();
         }
         
         // Ascolta i nuovi messaggi dal database
-        chatRef.limitToLast(20).on('child_added', (snapshot) => {
-            const message = snapshot.val();
-            // Non mostrare di nuovo i messaggi inviati localmente
-            if (message.userId !== userId) {
-                addChatMessage(message.username, message.text);
+        onValue(chatRef, (snapshot) => {
+            // Pulisci i messaggi esistenti
+            chatArea.innerHTML = '';
+            
+            // Aggiungi i messaggi dal database
+            const messages = snapshot.val();
+            if (messages) {
+                Object.values(messages).forEach(msg => {
+                    addChatMessage(msg.username, msg.text, msg.userId === userId);
+                });
             }
         });
         
@@ -955,10 +959,10 @@ const database = firebase.database();
         ];
         
         // Aggiungi i messaggi iniziali solo se la chat è vuota
-        chatRef.once('value', (snapshot) => {
+        get(chatRef).then((snapshot) => {
             if (!snapshot.exists()) {
                 initialMessages.forEach(msg => {
-                    chatRef.push({
+                    push(chatRef, {
                         username: msg.username,
                         text: msg.message,
                         timestamp: Date.now(),
@@ -972,11 +976,8 @@ const database = firebase.database();
         function sendChatMessage() {
             const message = chatInput.value.trim();
             if (message) {
-                // Aggiungi il messaggio localmente
-                addChatMessage(selectedUsername, message, true);
-                
                 // Salva il messaggio nel database
-                chatRef.push({
+                push(chatRef, {
                     username: selectedUsername,
                     text: message,
                     timestamp: Date.now(),
@@ -996,12 +997,12 @@ const database = firebase.database();
         
         // SCRIPT PER IL SONDAGGIO MINI CONDIVISO
         // Riferimento al database per i risultati del sondaggio
-        const pollRef = database.ref('miniPoll');
+        const pollRef = ref(database, 'miniPoll');
         
         // Inizializza i risultati del sondaggio nel database se non esistono
-        pollRef.once('value', (snapshot) => {
+        get(pollRef).then((snapshot) => {
             if (!snapshot.exists()) {
-                pollRef.set({
+                set(pollRef, {
                     connor: 45,
                     markus: 30,
                     kara: 20,
@@ -1012,7 +1013,7 @@ const database = firebase.database();
         });
         
         // Ascolta i cambiamenti nei risultati del sondaggio
-        pollRef.on('value', (snapshot) => {
+        onValue(pollRef, (snapshot) => {
             const results = snapshot.val();
             if (results) {
                 document.getElementById('connor-result').style.width = results.connor + '%';
@@ -1032,7 +1033,8 @@ const database = firebase.database();
         // Tiene traccia se l'utente ha già votato nel sondaggio mini
         let hasVotedMiniPoll = false;
         
-        function selectMiniPollOption(option) {
+        // Funzione per selezionare un'opzione nel sondaggio mini
+        window.selectMiniPollOption = function(option) {
             if (hasVotedMiniPoll) return;
             
             // Rimuovi la selezione da tutte le opzioni
@@ -1045,12 +1047,14 @@ const database = firebase.database();
             
             const optionName = option.dataset.option.toLowerCase();
             
-            // Aggiorna i risultati nel database
-            pollRef.transaction((currentData) => {
-                if (currentData) {
+            // Ottieni i dati attuali
+            get(pollRef).then((snapshot) => {
+                if (snapshot.exists()) {
+                    const currentData = snapshot.val();
+                    
                     // Incrementa il voto per l'opzione selezionata
-                    currentData[optionName] += 1;
-                    currentData.totalVotes += 1;
+                    currentData[optionName]++;
+                    currentData.totalVotes++;
                     
                     // Calcola le nuove percentuali
                     const total = currentData.totalVotes;
@@ -1065,25 +1069,32 @@ const database = firebase.database();
                         currentData[optionName] += (100 - sum);
                     } else if (sum > 100) {
                         // Trova l'opzione con la percentuale più alta e riducila
-                        const highest = Object.entries(currentData)
-                            .filter(([key]) => ['connor', 'markus', 'kara', 'altro'].includes(key))
-                            .sort(([, a], [, b]) => b - a)[0][0];
+                        const values = [
+                            { key: 'connor', value: currentData.connor },
+                            { key: 'markus', value: currentData.markus },
+                            { key: 'kara', value: currentData.kara },
+                            { key: 'altro', value: currentData.altro }
+                        ];
+                        
+                        const highest = values.sort((a, b) => b.value - a.value)[0].key;
                         currentData[highest] -= (sum - 100);
                     }
+                    
+                    // Aggiorna il database
+                    set(pollRef, currentData);
+                    
+                    hasVotedMiniPoll = true;
                 }
-                return currentData;
             });
-            
-            hasVotedMiniPoll = true;
-        }
+        };
         
         // SCRIPT PER LA VOTAZIONE INTERATTIVA CONDIVISA
         // Riferimento al database per la votazione
-        const voteRef = database.ref('votes');
-        const timerRef = database.ref('timer');
+        const voteRef = ref(database, 'votes');
+        const timerRef = ref(database, 'timer');
         
         let voteTimer;
-        let countdown;
+        let countdown = 7; // Cambiato da 10 a 7 secondi
         const countdownDisplay = document.getElementById('countdown');
         const timerBar = document.getElementById('timer-bar');
         const voteButtons = document.querySelectorAll('.button');
@@ -1096,9 +1107,9 @@ const database = firebase.database();
         let hasVoted = false;
         
         // Inizializza i dati di votazione nel database se non esistono
-        voteRef.once('value', (snapshot) => {
+        get(voteRef).then((snapshot) => {
             if (!snapshot.exists()) {
-                voteRef.set({
+                set(voteRef, {
                     x: 0,
                     o: 0,
                     square: 0,
@@ -1110,10 +1121,10 @@ const database = firebase.database();
         });
         
         // Inizializza il timer nel database se non esiste
-        timerRef.once('value', (snapshot) => {
+        get(timerRef).then((snapshot) => {
             if (!snapshot.exists()) {
-                timerRef.set({
-                    countdown: 10,
+                set(timerRef, {
+                    countdown: 7, // Cambiato da 10 a 7 secondi
                     lastReset: Date.now()
                 });
             }
@@ -1121,20 +1132,20 @@ const database = firebase.database();
         
         // Funzione per sincronizzare il timer locale con quello del database
         function syncTimer() {
-            timerRef.once('value', (snapshot) => {
+            get(timerRef).then((snapshot) => {
                 const timerData = snapshot.val();
                 if (timerData) {
                     const elapsedTime = Math.floor((Date.now() - timerData.lastReset) / 1000);
                     countdown = Math.max(0, timerData.countdown - elapsedTime);
                     countdownDisplay.textContent = countdown;
-                    timerBar.style.width = (countdown / 10 * 100) + '%';
+                    timerBar.style.width = (countdown / 7 * 100) + '%'; // Cambiato da 10 a 7 secondi
                     
                     // Se il timer è scaduto, attendiamo che qualcuno lo resetti
                     if (countdown <= 0) {
                         clearInterval(voteTimer);
                         
                         // Se siamo i primi a notare che il timer è scaduto, resettiamolo
-                        if (Date.now() - timerData.lastReset > 10000) {
+                        if (Date.now() - timerData.lastReset > 7000) { // Cambiato da 10000 a 7000
                             resetVote();
                         }
                     }
@@ -1143,7 +1154,7 @@ const database = firebase.database();
         }
         
         // Ascolta i cambiamenti nei risultati della votazione
-        voteRef.on('value', (snapshot) => {
+        onValue(voteRef, (snapshot) => {
             const voteData = snapshot.val();
             if (voteData) {
                 const total = voteData.totalVotes || 1; // Evita divisione per zero
@@ -1188,124 +1199,205 @@ const database = firebase.database();
                     voteButtons.forEach(button => {
                         button.disabled = true;
                     });
+                } else {
+                    // Riabilita i pulsanti se la votazione è attiva
+                    voteButtons.forEach(button => {
+                        button.disabled = hasVoted;
+                    });
+                    
+                    // Nascondi il risultato
+                    popularChoice.style.display = 'none';
                 }
             }
         });
         
-        // Ascolta i cambiamenti nel timer
-        timerRef.on('value', (snapshot) => {
-            const timerData = snapshot.val();
-            if (timerData) {
-                const elapsedTime = Math.floor((Date.now() - timerData.lastReset) / 1000);
-                countdown = Math.max(0, timerData.countdown - elapsedTime);
-                countdownDisplay.textContent = countdown;
-                timerBar.style.width = (countdown / 10 * 100) + '%';
-                
-                if (countdown <= 0) {
-                    // Termina la votazione
-                    voteRef.update({ votingActive: false });
-                    
-                    // Mostra il risultato
-                    popularChoice.style.display = 'block';
-                    
-                    // Riparte la votazione dopo 1 secondo
-                    setTimeout(() => {
-                        // Solo un client dovrebbe resettare il voto
-                        if (Math.random() < 0.2) { // 20% di probabilità per evitare conflitti
-                            resetVote();
-                        }
-                    }, 1000);
-                }
-            }
-        });
+       // Ascolta i cambiamenti nel timer
+onValue(timerRef, (snapshot) => {
+  const timerData = snapshot.val();
+  if (timerData) {
+    const elapsedTime = Math.floor((Date.now() - timerData.lastReset) / 1000);
+    countdown = Math.max(0, timerData.countdown - elapsedTime);
+    countdownDisplay.textContent = countdown;
+    timerBar.style.width = (countdown / 7 * 100) + '%'; // Cambiato da 10 a 7 secondi
+    
+    // Se il timer è scaduto, mostra il risultato più popolare
+    if (countdown <= 0 && voteTimer) {
+      clearInterval(voteTimer);
+      
+      // Se siamo i primi a notare che il timer è scaduto, resettiamolo dopo aver mostrato i risultati
+      if (Date.now() - timerData.lastReset > 8000) { // Un po' più di 7 secondi per dare tempo di mostrare i risultati
+        // Disattiva la votazione per mostrare i risultati
+        update(voteRef, { votingActive: false });
         
-        // Funzione per resettare la votazione
-       // Funzione per resettare la votazione
+        // Dopo 3 secondi, resetta tutto per un nuovo round di votazioni
+        setTimeout(() => {
+          resetVote();
+        }, 3000);
+      }
+    }
+  }
+});
+
+// Funzione per votare
+function vote(option) {
+  if (hasVoted) return;
+  
+  // Aggiorna il conteggio dei voti usando una transazione
+  const optionRef = ref(database, `votes/${option}`);
+  const totalRef = ref(database, 'votes/totalVotes');
+  
+  transaction(optionRef, (currentVotes) => {
+    return (currentVotes || 0) + 1;
+  });
+  
+  transaction(totalRef, (currentTotal) => {
+    return (currentTotal || 0) + 1;
+  });
+  
+  // Segna l'utente come votante
+  hasVoted = true;
+  votedMessage.style.display = 'block';
+  voteButtons.forEach(button => {
+    button.disabled = true;
+  });
+}
+
+// Funzione per resettare la votazione
 function resetVote() {
-    // Reimposta il timer
-    timerRef.set({
-        countdown: 7,
-        lastReset: Date.now()
-    });
-    
-    // Reimposta i voti
-    voteRef.set({
-        x: 0,
-        o: 0,
-        square: 0,
-        triangle: 0,
-        totalVotes: 0,
-        votingActive: true
-    });
-    
-    // Nascondi il messaggio di voto e la scelta popolare
-    votedMessage.style.display = 'none';
-    popularChoice.style.display = 'none';
-    
-    // Riabilita i pulsanti
-    voteButtons.forEach(button => {
-        button.disabled = false;
-    });
-    
-    // Reimposta lo stato di voto dell'utente
-    hasVoted = false;
-    
-    // Riavvia il timer locale
-    startLocalTimer();
+  // Resetta il timer nel database
+  update(timerRef, {
+    countdown: 7, // Cambiato da 10 a 7 secondi
+    lastReset: Date.now()
+  });
+  
+  // Resetta i voti nel database
+  set(voteRef, {
+    x: 0,
+    o: 0,
+    square: 0,
+    triangle: 0,
+    totalVotes: 0,
+    votingActive: true
+  });
+  
+  // Resetta lo stato locale
+  hasVoted = false;
+  countdown = 7; // Cambiato da 10 a 7 secondi
+  countdownDisplay.textContent = countdown;
+  timerBar.style.width = '100%';
+  votedMessage.style.display = 'none';
+  popularChoice.style.display = 'none';
+  
+  // Riabilita i pulsanti
+  voteButtons.forEach(button => {
+    button.disabled = false;
+  });
+  
+  // Avvia un nuovo timer
+  clearInterval(voteTimer);
+  voteTimer = setInterval(() => {
+    syncTimer();
+  }, 1000);
 }
 
-// Funzione per avviare il timer locale
-function startLocalTimer() {
-    clearInterval(voteTimer);
-    voteTimer = setInterval(() => {
-        countdown--;
-        countdownDisplay.textContent = countdown;
-        timerBar.style.width = (countdown / 10 * 100) + '%';
-        
-        if (countdown <= 0) {
-            clearInterval(voteTimer);
-        }
-    }, 1000);
-}
-
-// Gestione click sui pulsanti di voto
+// Gestisci i clic sui pulsanti di voto
 document.getElementById('x-button').addEventListener('click', () => vote('x'));
 document.getElementById('o-button').addEventListener('click', () => vote('o'));
 document.getElementById('square-button').addEventListener('click', () => vote('square'));
 document.getElementById('triangle-button').addEventListener('click', () => vote('triangle'));
 
-// Funzione per registrare un voto
-function vote(option) {
-    if (hasVoted) return;
-    
-    // Controlla se la votazione è attiva
-    voteRef.once('value', (snapshot) => {
-        const voteData = snapshot.val();
-        if (voteData && voteData.votingActive) {
-            // Registra il voto
-            voteRef.transaction((currentData) => {
-                if (currentData) {
-                    currentData[option]++;
-                    currentData.totalVotes++;
-                }
-                return currentData;
-            });
-            
-            // Mostra il messaggio di conferma
-            votedMessage.style.display = 'block';
-            hasVoted = true;
-        }
-    });
+// Inizializza il timer quando la pagina si carica
+voteTimer = setInterval(() => {
+  syncTimer();
+}, 1000);
+
+// Avvia immediatamente la sincronizzazione
+syncTimer();
+
+// Limita la chat a 50 messaggi massimi per evitare sovraccarichi
+function limitChatMessages() {
+  get(chatRef).then((snapshot) => {
+    const messages = snapshot.val();
+    if (messages) {
+      const messageArray = Object.entries(messages);
+      if (messageArray.length > 50) {
+        // Rimuovi i messaggi più vecchi
+        const messagesToRemove = messageArray.slice(0, messageArray.length - 50);
+        messagesToRemove.forEach(([key]) => {
+          const oldMessageRef = ref(database, `chat/${key}`);
+          set(oldMessageRef, null);
+        });
+      }
+    }
+  });
 }
 
-// Inizia la sincronizzazione del timer e avvia il timer locale
-syncTimer();
-startLocalTimer();
+// Esegui la pulizia della chat ogni minuto
+setInterval(limitChatMessages, 60000);
 
-// Sincronizza il timer ogni secondo
-setInterval(syncTimer, 1000);
-</script>
+// Assicurati che il mini-sondaggio mostri sempre percentuali corrette (somma 100%)
+function normalizePollPercentages() {
+  get(pollRef).then((snapshot) => {
+    if (snapshot.exists()) {
+      const data = snapshot.val();
+      const total = data.totalVotes;
+      
+      // Calcola le percentuali
+      let connor = Math.round((data.connor / total) * 100);
+      let markus = Math.round((data.markus / total) * 100);
+      let kara = Math.round((data.kara / total) * 100);
+      let altro = Math.round((data.altro / total) * 100);
+      
+      // Correggi la somma se necessario
+      const sum = connor + markus + kara + altro;
+      if (sum !== 100) {
+        // Aggiusta il valore più alto
+        if (sum < 100) {
+          // Trova il più alto e aggiungi la differenza
+          const max = Math.max(connor, markus, kara, altro);
+          if (max === connor) connor += (100 - sum);
+          else if (max === markus) markus += (100 - sum);
+          else if (max === kara) kara += (100 - sum);
+          else altro += (100 - sum);
+        } else {
+          // Trova il più alto e sottrai la differenza
+          const max = Math.max(connor, markus, kara, altro);
+          if (max === connor) connor -= (sum - 100);
+          else if (max === markus) markus -= (sum - 100);
+          else if (max === kara) kara -= (sum - 100);
+          else altro -= (sum - 100);
+        }
+      }
+      
+      // Aggiorna il database con le percentuali corrette
+      update(pollRef, {
+        connor: connor,
+        markus: markus,
+        kara: kara,
+        altro: altro
+      });
+    }
+  });
+}
 
+// Correggi le percentuali del sondaggio all'avvio e periodicamente
+normalizePollPercentages();
+setInterval(normalizePollPercentages, 30000);
 
+// Mostra un messaggio di benvenuto nella chat per i nuovi utenti
+setTimeout(() => {
+  if (chatArea.childElementCount < 3) {
+    // Se ci sono meno di 3 messaggi, aggiungi un messaggio di benvenuto
+    push(chatRef, {
+      username: "Sistema",
+      text: "Benvenuto nella chat di Detroit: Become Human! Puoi discutere del gioco qui.",
+      timestamp: Date.now(),
+      userId: "system"
+    });
+  }
+}, 3000);
+
+console.log("Script di Detroit: Become Human caricato con successo!");
+    </script>
 </body>
 </html>
