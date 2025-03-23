@@ -620,7 +620,7 @@ footer {
             <h3 class="carousel-title">Relazioni personaggi</h3>
             <div class="carousel-container">
                 <div class="carousel-track">
-                    <div class="carousel-slide">
+                    <div class="carousel-slide active">
                         <img src="CB.png" alt="Detroit: Become Human - Immagine 1">
                     </div>
                     <div class="carousel-slide">
@@ -805,373 +805,408 @@ footer {
     </footer>
     
     <!-- Importa la versione corretta di Firebase con i CDN moduli -->
-    <script type="module">
-        // Importa Firebase correttamente
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getDatabase, ref, onValue, push, set, get, update, transaction } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
-
-        // Configurazione di Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyClBghAz1yY0FI3ujRNfdpO0xSl9Wcvp8Q",
-            authDomain: "detroit-2bd2e.firebaseapp.com",
-            projectId: "detroit-2bd2e",
-            storageBucket: "detroit-2bd2e.firebasestorage.app",
-            messagingSenderId: "875382451791",
-            appId: "1:875382451791:web:277eea38a0306c19f5c43a",
-            measurementId: "G-F8021XS9ED"
+  <!-- Place this script before the closing body tag -->
+<script type="module">
+  // Importa Firebase correttamente
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+  import { getDatabase, ref, onValue, push, set, get, update, transaction } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+  
+  // Configurazione di Firebase
+  const firebaseConfig = {
+    apiKey: "AIzaSyClBghAz1yY0FI3ujRNfdpO0xSl9Wcvp8Q",
+    authDomain: "detroit-2bd2e.firebaseapp.com",
+    projectId: "detroit-2bd2e",
+    storageBucket: "detroit-2bd2e.firebasestorage.app",
+    messagingSenderId: "875382451791",
+    appId: "1:875382451791:web:277eea38a0306c19f5c43a",
+    measurementId: "G-F8021XS9ED",
+    databaseURL: "https://detroit-2bd2e-default-rtdb.firebaseio.com"
+  };
+  
+  // Inizializza Firebase
+  const app = initializeApp(firebaseConfig);
+  const database = getDatabase(app);
+  
+  // SCRIPT PER IL CAROSELLO
+  const slides = document.querySelectorAll('.carousel-slide');
+  const nextButton = document.getElementById('nextButton');
+  const prevButton = document.getElementById('prevButton');
+  const dotsContainer = document.getElementById('carousel-dots');
+  let currentSlideIndex = 0;
+  
+  // Verifica che gli elementi del carosello esistano
+  if (slides.length > 0 && nextButton && prevButton && dotsContainer) {
+    // Crea i pallini per la navigazione
+    slides.forEach((_, index) => {
+      const dot = document.createElement('div');
+      dot.classList.add('carousel-dot');
+      if (index === 0) dot.classList.add('active');
+      dot.dataset.index = index;
+      dotsContainer.appendChild(dot);
+    });
+    
+    const dots = Array.from(dotsContainer.children);
+    
+    // Funzione per mostrare una slide specifica
+    function showSlide(index) {
+      // Nascondi tutte le slide
+      slides.forEach(slide => {
+        slide.classList.remove('active');
+      });
+      
+      // Rimuovi la classe attiva da tutti i dots
+      dots.forEach(dot => {
+        dot.classList.remove('active');
+      });
+      
+      // Mostra la slide corrente
+      slides[index].classList.add('active');
+      dots[index].classList.add('active');
+      
+      // Aggiorna l'indice corrente
+      currentSlideIndex = index;
+      
+      // Debug: Verifica che l'immagine sia caricata correttamente
+      const currentImage = slides[index].querySelector('img');
+      if (currentImage) {
+        console.log('Current image src:', currentImage.src);
+        // Aggiungi un handler per gli errori di caricamento
+        currentImage.onerror = function() {
+          console.error('Error loading image:', this.src);
+          // Prova a correggere il percorso dell'immagine
+          this.src = `./images/${this.alt.toLowerCase()}.jpg`;
         };
-
-        // Inizializza Firebase
-        const app = initializeApp(firebaseConfig);
-        const database = getDatabase(app);
+      }
+    }
+    
+    // Inizializza mostrando la prima slide
+    showSlide(0);
+    
+    // Gestione click sui pallini
+    dotsContainer.addEventListener('click', e => {
+      const targetDot = e.target.closest('.carousel-dot');
+      if (!targetDot) return;
+      const targetIndex = parseInt(targetDot.dataset.index);
+      showSlide(targetIndex);
+    });
+    
+    // Next button
+    nextButton.addEventListener('click', () => {
+      const nextIndex = (currentSlideIndex + 1) % slides.length;
+      showSlide(nextIndex);
+    });
+    
+    // Previous button
+    prevButton.addEventListener('click', () => {
+      const prevIndex = (currentSlideIndex - 1 + slides.length) % slides.length;
+      showSlide(prevIndex);
+    });
+    
+    // Auto-rotazione del carosello
+    setInterval(() => {
+      const nextIndex = (currentSlideIndex + 1) % slides.length;
+      showSlide(nextIndex);
+    }, 5000);
+  } else {
+    console.error('Elementi del carosello non trovati');
+  }
+  
+  // SCRIPT PER LA SEZIONE DI INTRATTENIMENTO
+  const tabs = document.querySelectorAll('.tab');
+  const tabContents = document.querySelectorAll('.tab-content');
+  
+  if (tabs.length > 0 && tabContents.length > 0) {
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const target = tab.dataset.tab;
+        console.log('Tab clicked:', target);
         
-        // SCRIPT PER IL CAROSELLO
-        const slides = document.querySelectorAll('.carousel-slide');
-        const nextButton = document.getElementById('nextButton');
-        const prevButton = document.getElementById('prevButton');
-        const dotsContainer = document.getElementById('carousel-dots');
+        // Rimuovi la classe active da tutti i tab e contenuti
+        tabs.forEach(t => t.classList.remove('active'));
+        tabContents.forEach(c => c.classList.remove('active'));
         
-        let currentSlideIndex = 0;
-        
-        // Crea i pallini per la navigazione
-        slides.forEach((_, index) => {
-            const dot = document.createElement('div');
-            dot.classList.add('carousel-dot');
-            if (index === 0) dot.classList.add('active');
-            dot.dataset.index = index;
-            dotsContainer.appendChild(dot);
-        });
-        
-        const dots = Array.from(dotsContainer.children);
-        
-        // Funzione per mostrare una slide specifica
-        function showSlide(index) {
-            // Nascondi tutte le slide
-            slides.forEach(slide => {
-                slide.classList.remove('active');
-            });
-            
-            // Rimuovi la classe attiva da tutti i dots
-            dots.forEach(dot => {
-                dot.classList.remove('active');
-            });
-            
-            // Mostra la slide corrente
-            slides[index].classList.add('active');
-            dots[index].classList.add('active');
-            
-            // Aggiorna l'indice corrente
-            currentSlideIndex = index;
+        // Aggiungi la classe active al tab cliccato e al contenuto corrispondente
+        tab.classList.add('active');
+        const targetContent = document.getElementById(`${target}-content`);
+        if (targetContent) {
+          targetContent.classList.add('active');
+        } else {
+          console.error(`Content for tab ${target} not found`);
         }
-        
-        // Inizializza mostrando la prima slide
-        showSlide(0);
-        
-        // Gestione click sui pallini
-        dotsContainer.addEventListener('click', e => {
-            const targetDot = e.target.closest('.carousel-dot');
-            if (!targetDot) return;
-            
-            const targetIndex = parseInt(targetDot.dataset.index);
-            showSlide(targetIndex);
+      });
+    });
+  } else {
+    console.error('Elementi dei tab non trovati');
+  }
+  
+  // SCRIPT PER LA CHAT CONDIVISA
+  const chatArea = document.getElementById('chat-area');
+  const chatInput = document.getElementById('chat-input-field');
+  const chatSendButton = document.getElementById('chat-send-button');
+  
+  if (chatArea && chatInput && chatSendButton) {
+    // Genera un ID univoco per l'utente corrente
+    const userId = 'user_' + Math.random().toString(36).substring(2, 9);
+    
+    // Seleziona un username casuale per l'utente
+    const usernames = ['Connor_Fan', 'Markus_RK200', 'DetroitLover', 'Android_Friend', 'RealHuman'];
+    const selectedUsername = usernames[Math.floor(Math.random() * usernames.length)];
+    
+    // Riferimento al database per i messaggi di chat
+    const chatRef = ref(database, 'chat');
+    
+    // Funzione per aggiungere un messaggio alla chat
+    function addChatMessage(username, message, isLocal = false) {
+      const messageEl = document.createElement('div');
+      messageEl.className = 'chat-message' + (isLocal ? ' local-message' : '');
+      messageEl.innerHTML = `<span class="user-name">${username}:</span> ${message}`;
+      chatArea.appendChild(messageEl);
+      chatArea.scrollTop = chatArea.scrollHeight; // Auto-scroll
+    }
+    
+    // Ascolta i nuovi messaggi dal database
+    onValue(chatRef, (snapshot) => {
+      // Pulisci i messaggi esistenti
+      chatArea.innerHTML = '';
+      
+      // Aggiungi i messaggi dal database
+      const messages = snapshot.val();
+      if (messages) {
+        Object.values(messages).forEach(msg => {
+          addChatMessage(msg.username, msg.text, msg.userId === userId);
         });
-        
-        // Next button
-        nextButton.addEventListener('click', () => {
-            const nextIndex = (currentSlideIndex + 1) % slides.length;
-            showSlide(nextIndex);
+      }
+    });
+    
+    // Crea alcuni messaggi iniziali nella chat
+    const initialMessages = [
+      { username: 'Markus_RK200', message: 'Benvenuti nella chat di Detroit: Become Human!' },
+      { username: 'Connor_Fan', message: 'Non vedo l\'ora di vedere come si svilupperà la storia!' },
+      { username: 'Android_Friend', message: 'Chi preferite tra Connor, Markus e Kara?' }
+    ];
+    
+    // Aggiungi i messaggi iniziali solo se la chat è vuota
+    get(chatRef).then((snapshot) => {
+      if (!snapshot.exists()) {
+        initialMessages.forEach(msg => {
+          push(chatRef, {
+            username: msg.username,
+            text: msg.message,
+            timestamp: Date.now(),
+            userId: 'system'
+          });
         });
-        
-        // Previous button
-        prevButton.addEventListener('click', () => {
-            const prevIndex = (currentSlideIndex - 1 + slides.length) % slides.length;
-            showSlide(prevIndex);
+      }
+    });
+    
+    // Gestione invio messaggi
+    function sendChatMessage() {
+      const message = chatInput.value.trim();
+      if (message) {
+        // Salva il messaggio nel database
+        push(chatRef, {
+          username: selectedUsername,
+          text: message,
+          timestamp: Date.now(),
+          userId: userId
         });
-        
-        // Auto-rotazione del carosello
-        setInterval(() => {
-            const nextIndex = (currentSlideIndex + 1) % slides.length;
-            showSlide(nextIndex);
-        }, 5000);
-        
-        
-        // SCRIPT PER LA SEZIONE DI INTRATTENIMENTO
-        const tabs = document.querySelectorAll('.tab');
-        const tabContents = document.querySelectorAll('.tab-content');
-        
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                const target = tab.dataset.tab;
-                
-                // Rimuovi la classe active da tutti i tab e contenuti
-                tabs.forEach(t => t.classList.remove('active'));
-                tabContents.forEach(c => c.classList.remove('active'));
-                
-                // Aggiungi la classe active al tab cliccato e al contenuto corrispondente
-                tab.classList.add('active');
-                document.getElementById(`${target}-content`).classList.add('active');
-            });
-        });
-        
-        // SCRIPT PER LA CHAT CONDIVISA
-        const chatArea = document.getElementById('chat-area');
-        const chatInput = document.getElementById('chat-input-field');
-        const chatSendButton = document.getElementById('chat-send-button');
-        
-        // Genera un ID univoco per l'utente corrente
-        const userId = 'user_' + Math.random().toString(36).substring(2, 9);
-        
-        // Seleziona un username casuale per l'utente
-        const usernames = ['Connor_Fan', 'Markus_RK200', 'DetroitLover', 'Android_Friend', 'RealHuman'];
-        const selectedUsername = usernames[Math.floor(Math.random() * usernames.length)];
-        
-        // Riferimento al database per i messaggi di chat
-        const chatRef = ref(database, 'chat');
-        
-        // Funzione per aggiungere un messaggio alla chat
-        function addChatMessage(username, message, isLocal = false) {
-            const messageEl = document.createElement('div');
-            messageEl.className = 'chat-message' + (isLocal ? ' local-message' : '');
-            messageEl.innerHTML = `<span class="user-name">${username}:</span> ${message}`;
-            chatArea.appendChild(messageEl);
-            chatArea.scrollTop = chatArea.scrollHeight; // Auto-scroll
-        }
-        
-        // Ascolta i nuovi messaggi dal database
-        onValue(chatRef, (snapshot) => {
-            // Pulisci i messaggi esistenti
-            chatArea.innerHTML = '';
-            
-            // Aggiungi i messaggi dal database
-            const messages = snapshot.val();
-            if (messages) {
-                Object.values(messages).forEach(msg => {
-                    addChatMessage(msg.username, msg.text, msg.userId === userId);
-                });
-            }
-        });
-        
-        // Crea alcuni messaggi iniziali nella chat
-        const initialMessages = [
-            { username: 'Markus_RK200', message: 'Benvenuti nella chat di Detroit: Become Human!' },
-            { username: 'Connor_Fan', message: 'Non vedo l\'ora di vedere come si svilupperà la storia!' },
-            { username: 'Android_Friend', message: 'Chi preferite tra Connor, Markus e Kara?' }
-        ];
-        
-        // Aggiungi i messaggi iniziali solo se la chat è vuota
-        get(chatRef).then((snapshot) => {
-            if (!snapshot.exists()) {
-                initialMessages.forEach(msg => {
-                    push(chatRef, {
-                        username: msg.username,
-                        text: msg.message,
-                        timestamp: Date.now(),
-                        userId: 'system'
-                    });
-                });
-            }
-        });
-        
-        // Gestione invio messaggi
-        function sendChatMessage() {
-            const message = chatInput.value.trim();
-            if (message) {
-                // Salva il messaggio nel database
-                push(chatRef, {
-                    username: selectedUsername,
-                    text: message,
-                    timestamp: Date.now(),
-                    userId: userId
-                });
-                
-                chatInput.value = '';
-            }
-        }
-        
-        chatSendButton.addEventListener('click', sendChatMessage);
-        chatInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                sendChatMessage();
-            }
-        });
-        
-        // SCRIPT PER IL SONDAGGIO MINI CONDIVISO
-        // Riferimento al database per i risultati del sondaggio
-        const pollRef = ref(database, 'miniPoll');
-        
-        // Inizializza i risultati del sondaggio nel database se non esistono
-        get(pollRef).then((snapshot) => {
-            if (!snapshot.exists()) {
-                set(pollRef, {
-                    connor: 45,
-                    markus: 30,
-                    kara: 20,
-                    altro: 5,
-                    totalVotes: 100
-                });
-            }
-        });
-        
-        // Ascolta i cambiamenti nei risultati del sondaggio
-        onValue(pollRef, (snapshot) => {
-            const results = snapshot.val();
-            if (results) {
-                document.getElementById('connor-result').style.width = results.connor + '%';
-                document.getElementById('connor-result').textContent = results.connor + '%';
-                
-                document.getElementById('markus-result').style.width = results.markus + '%';
-                document.getElementById('markus-result').textContent = results.markus + '%';
-                
-                document.getElementById('kara-result').style.width = results.kara + '%';
-                document.getElementById('kara-result').textContent = results.kara + '%';
-                
-                document.getElementById('altro-result').style.width = results.altro + '%';
-                document.getElementById('altro-result').textContent = results.altro + '%';
-            }
-        });
-        
-        // Tiene traccia se l'utente ha già votato nel sondaggio mini
-        let hasVotedMiniPoll = false;
-        
-        // Funzione per selezionare un'opzione nel sondaggio mini
-        window.selectMiniPollOption = function(option) {
-            if (hasVotedMiniPoll) return;
-            
-            // Rimuovi la selezione da tutte le opzioni
-            document.querySelectorAll('.mini-poll-option').forEach(opt => {
-                opt.classList.remove('selected');
-            });
-            
-            // Aggiungi la classe selected all'opzione cliccata
-            option.classList.add('selected');
-            
-            const optionName = option.dataset.option.toLowerCase();
-            
-            // Ottieni i dati attuali
-            get(pollRef).then((snapshot) => {
-                if (snapshot.exists()) {
-                    const currentData = snapshot.val();
-                    
-                    // Incrementa il voto per l'opzione selezionata
-                    currentData[optionName]++;
-                    currentData.totalVotes++;
-                    
-                    // Calcola le nuove percentuali
-                    const total = currentData.totalVotes;
-                    currentData.connor = Math.round((currentData.connor / total) * 100);
-                    currentData.markus = Math.round((currentData.markus / total) * 100);
-                    currentData.kara = Math.round((currentData.kara / total) * 100);
-                    currentData.altro = Math.round((currentData.altro / total) * 100);
-                    
-                    // Assicurati che la somma sia 100%
-                    const sum = currentData.connor + currentData.markus + currentData.kara + currentData.altro;
-                    if (sum < 100) {
-                        currentData[optionName] += (100 - sum);
-                    } else if (sum > 100) {
-                        // Trova l'opzione con la percentuale più alta e riducila
-                        const values = [
-                            { key: 'connor', value: currentData.connor },
-                            { key: 'markus', value: currentData.markus },
-                            { key: 'kara', value: currentData.kara },
-                            { key: 'altro', value: currentData.altro }
-                        ];
-                        
-                        const highest = values.sort((a, b) => b.value - a.value)[0].key;
-                        currentData[highest] -= (sum - 100);
-                    }
-                    
-                    // Aggiorna il database
-                    set(pollRef, currentData);
-                    
-                    hasVotedMiniPoll = true;
-                }
-            });
-        };
-        
-        // SCRIPT PER LA VOTAZIONE INTERATTIVA CONDIVISA
-// Riferimento al database per la votazione
-const voteRef = ref(database, 'votes');
-const timerRef = ref(database, 'timer');
-
-let voteTimer;
-let countdown = 7; // Durata votazione: 7 secondi
-const countdownDisplay = document.getElementById('countdown');
-const timerBar = document.getElementById('timer-bar');
-const voteButtons = document.querySelectorAll('.button');
-const votedMessage = document.getElementById('voted-message');
-const popularChoice = document.getElementById('popular-choice');
-const choiceSymbol = document.getElementById('choice-symbol');
-const choicePercentage = document.getElementById('choice-percentage');
-
-// Tiene traccia se l'utente ha già votato in questo round
-let hasVoted = false;
-
-// Inizializza i dati di votazione nel database se non esistono
-get(voteRef).then((snapshot) => {
+        chatInput.value = '';
+      }
+    }
+    
+    chatSendButton.addEventListener('click', sendChatMessage);
+    chatInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        sendChatMessage();
+      }
+    });
+  } else {
+    console.error('Elementi della chat non trovati');
+  }
+  
+  // SCRIPT PER IL SONDAGGIO MINI CONDIVISO
+  // Riferimento al database per i risultati del sondaggio
+  const pollRef = ref(database, 'miniPoll');
+  
+  // Inizializza i risultati del sondaggio nel database se non esistono
+  get(pollRef).then((snapshot) => {
     if (!snapshot.exists()) {
+      set(pollRef, {
+        connor: 45,
+        markus: 30,
+        kara: 20,
+        altro: 5,
+        totalVotes: 100
+      });
+    }
+  });
+  
+  // Ascolta i cambiamenti nei risultati del sondaggio
+  onValue(pollRef, (snapshot) => {
+    const results = snapshot.val();
+    if (results) {
+      const connorResult = document.getElementById('connor-result');
+      const markusResult = document.getElementById('markus-result');
+      const karaResult = document.getElementById('kara-result');
+      const altroResult = document.getElementById('altro-result');
+      
+      if (connorResult && markusResult && karaResult && altroResult) {
+        connorResult.style.width = results.connor + '%';
+        connorResult.textContent = results.connor + '%';
+        markusResult.style.width = results.markus + '%';
+        markusResult.textContent = results.markus + '%';
+        karaResult.style.width = results.kara + '%';
+        karaResult.textContent = results.kara + '%';
+        altroResult.style.width = results.altro + '%';
+        altroResult.textContent = results.altro + '%';
+      }
+    }
+  });
+  
+  // Tiene traccia se l'utente ha già votato nel sondaggio mini
+  let hasVotedMiniPoll = false;
+  
+  // Funzione per selezionare un'opzione nel sondaggio mini
+  window.selectMiniPollOption = function(option) {
+    if (hasVotedMiniPoll) return;
+    
+    // Rimuovi la selezione da tutte le opzioni
+    document.querySelectorAll('.mini-poll-option').forEach(opt => {
+      opt.classList.remove('selected');
+    });
+    
+    // Aggiungi la classe selected all'opzione cliccata
+    option.classList.add('selected');
+    
+    const optionName = option.dataset.option.toLowerCase();
+    
+    // Ottieni i dati attuali
+    get(pollRef).then((snapshot) => {
+      if (snapshot.exists()) {
+        const currentData = snapshot.val();
+        
+        // Incrementa il voto per l'opzione selezionata
+        const optionCount = currentData[optionName] || 0;
+        currentData[optionName] = optionCount + 1;
+        currentData.totalVotes = (currentData.totalVotes || 0) + 1;
+        
+        // Calcola le nuove percentuali
+        const total = currentData.totalVotes;
+        currentData.connor = Math.round(((currentData.connor || 0) / total) * 100);
+        currentData.markus = Math.round(((currentData.markus || 0) / total) * 100);
+        currentData.kara = Math.round(((currentData.kara || 0) / total) * 100);
+        currentData.altro = Math.round(((currentData.altro || 0) / total) * 100);
+        
+        // Assicurati che la somma sia 100%
+        const sum = currentData.connor + currentData.markus + currentData.kara + currentData.altro;
+        if (sum < 100) {
+          currentData[optionName] += (100 - sum);
+        } else if (sum > 100) {
+          // Trova l'opzione con la percentuale più alta e riducila
+          const values = [
+            { key: 'connor', value: currentData.connor },
+            { key: 'markus', value: currentData.markus },
+            { key: 'kara', value: currentData.kara },
+            { key: 'altro', value: currentData.altro }
+          ];
+          const highest = values.sort((a, b) => b.value - a.value)[0].key;
+          currentData[highest] -= (sum - 100);
+        }
+        
+        // Aggiorna il database
+        set(pollRef, currentData);
+        hasVotedMiniPoll = true;
+      }
+    });
+  };
+  
+  // SCRIPT PER LA VOTAZIONE INTERATTIVA CONDIVISA
+  // Riferimento al database per la votazione
+  const voteRef = ref(database, 'votes');
+  const timerRef = ref(database, 'timer');
+  
+  let countdown = 7; // Durata votazione: 7 secondi
+  const countdownDisplay = document.getElementById('countdown');
+  const timerBar = document.getElementById('timer-bar');
+  const voteButtons = document.querySelectorAll('.button');
+  const votedMessage = document.getElementById('voted-message');
+  const popularChoice = document.getElementById('popular-choice');
+  const choiceSymbol = document.getElementById('choice-symbol');
+  const choicePercentage = document.getElementById('choice-percentage');
+  
+  // Tiene traccia se l'utente ha già votato in questo round
+  let hasVoted = false;
+  
+  // Verifica che gli elementi esistano
+  if (countdownDisplay && timerBar && voteButtons.length > 0 && votedMessage && popularChoice && choiceSymbol && choicePercentage) {
+    // Inizializza i dati di votazione nel database se non esistono
+    get(voteRef).then((snapshot) => {
+      if (!snapshot.exists()) {
         set(voteRef, {
-            x: 0,
-            o: 0,
-            square: 0,
-            triangle: 0,
-            totalVotes: 0,
-            votingActive: true,
-            lastUpdateTime: Date.now()
+          x: 0,
+          o: 0,
+          square: 0,
+          triangle: 0,
+          totalVotes: 0,
+          votingActive: true,
+          lastUpdateTime: Date.now()
         });
-    }
-});
-
-// Inizializza il timer nel database se non esiste
-get(timerRef).then((snapshot) => {
-    if (!snapshot.exists()) {
-        set(timerRef, {
-            countdown: 7,
-            lastReset: Date.now(),
-            phase: 'voting' // Nuova proprietà per tenere traccia della fase (voting o results)
-        });
-    }
-});
-
-// Funzione per sincronizzare il timer locale con quello del database
-function syncTimer() {
+      }
+    });
+    
+    // Inizializza il timer nel database se non esiste
     get(timerRef).then((snapshot) => {
+      if (!snapshot.exists()) {
+        set(timerRef, {
+          countdown: 7,
+          lastReset: Date.now(),
+          phase: 'voting' // Nuova proprietà per tenere traccia della fase (voting o results)
+        });
+      }
+    });
+    
+    // Funzione per sincronizzare il timer locale con quello del database
+    function syncTimer() {
+      get(timerRef).then((snapshot) => {
         const timerData = snapshot.val();
         if (timerData) {
-            const elapsedTime = Math.floor((Date.now() - timerData.lastReset) / 1000);
-            countdown = Math.max(0, timerData.countdown - elapsedTime);
-            countdownDisplay.textContent = countdown;
-            timerBar.style.width = (countdown / 7 * 100) + '%';
-            
-            // Se il timer è scaduto e siamo in fase di votazione, mostra i risultati
-            if (countdown <= 0 && timerData.phase === 'voting') {
-                // Controlla se siamo i primi a notare che il timer è scaduto
-                if (Date.now() - timerData.lastReset > timerData.countdown * 1000) {
-                    // Cambia fase a results e aggiorna il database
-                    update(timerRef, {
-                        phase: 'results',
-                        lastReset: Date.now(),
-                        countdown: 1 // Mostra risultati per 1 secondo
-                    });
-                    
-                    // Disattiva la votazione per mostrare i risultati
-                    update(voteRef, { votingActive: false });
-                }
+          const elapsedTime = Math.floor((Date.now() - timerData.lastReset) / 1000);
+          countdown = Math.max(0, timerData.countdown - elapsedTime);
+          countdownDisplay.textContent = countdown;
+          timerBar.style.width = (countdown / 7 * 100) + '%';
+          
+          // Se il timer è scaduto e siamo in fase di votazione, mostra i risultati
+          if (countdown <= 0 && timerData.phase === 'voting') {
+            // Controlla se siamo i primi a notare che il timer è scaduto
+            if (Date.now() - timerData.lastReset > timerData.countdown * 1000) {
+              // Cambia fase a results e aggiorna il database
+              update(timerRef, {
+                phase: 'results',
+                lastReset: Date.now(),
+                countdown: 3 // Mostra risultati per 3 secondi
+              });
+              
+              // Disattiva la votazione per mostrare i risultati
+              update(voteRef, {
+                votingActive: false
+              });
             }
-            // Se il timer è scaduto e siamo in fase di risultati, avvia un nuovo round
-            else if (countdown <= 0 && timerData.phase === 'results') {
-                // Controlla se siamo i primi a notare che il timer è scaduto
-                if (Date.now() - timerData.lastReset > timerData.countdown * 1000) {
-                    resetVote();
-                }
+          }
+          // Se il timer è scaduto e siamo in fase di risultati, avvia un nuovo round
+          else if (countdown <= 0 && timerData.phase === 'results') {
+            // Controlla se siamo i primi a notare che il timer è scaduto
+            if (Date.now() - timerData.lastReset > timerData.countdown * 1000) {
+              resetVote();
             }
+          }
         }
-    });
-}
-
-// Ascolta i cambiamenti nei risultati della votazione
-onValue(voteRef, (snapshot) => {
-    const voteData = snapshot.val();
-    if (voteData) {
+      });
+    }
+    
+    // Ascolta i cambiamenti nei risultati della votazione
+    onValue(voteRef, (snapshot) => {
+      const voteData = snapshot.val();
+      if (voteData) {
         const total = voteData.totalVotes || 1; // Evita divisione per zero
         
         // Calcola le percentuali
@@ -1194,118 +1229,122 @@ onValue(voteRef, (snapshot) => {
         
         // Se la votazione non è attiva, mostra il risultato
         if (!voteData.votingActive) {
-            // Trova l'opzione con la percentuale più alta
-            const results = [
-                { id: 'x', symbol: '✕', percentage: xPercent },
-                { id: 'o', symbol: '○', percentage: oPercent },
-                { id: 'square', symbol: '□', percentage: squarePercent },
-                { id: 'triangle', symbol: '△', percentage: trianglePercent }
-            ];
-            
-            const winner = results.reduce((max, current) => {
-                return current.percentage > max.percentage ? current : max;
-            }, results[0]);
-            
-            choiceSymbol.textContent = winner.symbol;
-            choicePercentage.textContent = winner.percentage;
-            popularChoice.style.display = 'block';
-            
-            // Disabilita tutti i pulsanti
-            voteButtons.forEach(button => {
-                button.disabled = true;
-            });
+          // Trova l'opzione con la percentuale più alta
+          const results = [
+            { id: 'x', symbol: '✕', percentage: xPercent },
+            { id: 'o', symbol: '○', percentage: oPercent },
+            { id: 'square', symbol: '□', percentage: squarePercent },
+            { id: 'triangle', symbol: '△', percentage: trianglePercent }
+          ];
+          
+          // Sort by percentage (highest first)
+          results.sort((a, b) => b.percentage - a.percentage);
+          
+          // Update the popular choice display
+          choiceSymbol.textContent = results[0].symbol;
+          choicePercentage.textContent = results[0].percentage;
+          popularChoice.style.display = 'block';
         } else {
-            // Riabilita i pulsanti se la votazione è attiva e l'utente non ha votato
-            voteButtons.forEach(button => {
-                button.disabled = hasVoted;
-            });
-            
-            // Nascondi il risultato
-            popularChoice.style.display = 'none';
+          // If voting is active, hide the results
+          popularChoice.style.display = 'none';
         }
-    }
-});
-
-// Ascolta i cambiamenti nel timer
-onValue(timerRef, (snapshot) => {
-    const timerData = snapshot.val();
-    if (timerData) {
+      }
+    });
+    
+    // Ascolta i cambiamenti nel timer
+    onValue(timerRef, (snapshot) => {
+      const timerData = snapshot.val();
+      if (timerData) {
+        // Calcola il tempo rimanente
         const elapsedTime = Math.floor((Date.now() - timerData.lastReset) / 1000);
         countdown = Math.max(0, timerData.countdown - elapsedTime);
+        
+        // Aggiorna la UI del timer
         countdownDisplay.textContent = countdown;
-        timerBar.style.width = (countdown / timerData.countdown * 100) + '%';
+        timerBar.style.width = (countdown / 7 * 100) + '%';
         
-        // Aggiorna l'interfaccia in base alla fase attuale
+        // Gestisci le diverse fasi (votazione o mostra risultati)
         if (timerData.phase === 'voting') {
-            votedMessage.style.display = hasVoted ? 'block' : 'none';
-            popularChoice.style.display = 'none';
+          // Abilita i pulsanti di voto
+          voteButtons.forEach(btn => {
+            btn.disabled = false;
+          });
+          
+          // Nascondi il messaggio votato se è un nuovo round
+          if (!hasVoted) {
+            votedMessage.style.display = 'none';
+          }
+          
+          // Nascondi i risultati
+          popularChoice.style.display = 'none';
         } else if (timerData.phase === 'results') {
-            popularChoice.style.display = 'block';
+          // Disabilita i pulsanti di voto durante la fase di risultati
+          voteButtons.forEach(btn => {
+            btn.disabled = true;
+          });
+          
+          // Mostra i risultati
+          popularChoice.style.display = 'block';
         }
+      }
+    });
+    
+    // Funzione per gestire il voto
+    function handleVote(option) {
+      if (hasVoted) return;
+      
+      get(voteRef).then((snapshot) => {
+        const voteData = snapshot.val();
         
-        // Se il timer è scaduto, aggiorniamo in base alla fase
-        if (countdown <= 0) {
-            if (timerData.phase === 'voting' && Date.now() - timerData.lastReset > timerData.countdown * 1000 + 500) {
-                // Cambia fase a results
-                update(timerRef, {
-                    phase: 'results',
-                    lastReset: Date.now(),
-                    countdown: 1 // Mostra risultati per 1 secondo
-                });
-                
-                // Disattiva la votazione
-                update(voteRef, { votingActive: false });
-            } 
-            else if (timerData.phase === 'results' && Date.now() - timerData.lastReset > timerData.countdown * 1000 + 500) {
-                resetVote();
-            }
+        if (voteData && voteData.votingActive) {
+          // Usa una transazione per aggiornare il conteggio dei voti in modo atomico
+          const optionRef = ref(database, `votes/${option}`);
+          const totalVotesRef = ref(database, 'votes/totalVotes');
+          
+          transaction(optionRef, (currentVotes) => {
+            return (currentVotes || 0) + 1;
+          }).then(() => {
+            console.log(`Voto per ${option} registrato`);
+          }).catch(error => {
+            console.error('Errore durante la transazione:', error);
+          });
+          
+          transaction(totalVotesRef, (currentTotal) => {
+            return (currentTotal || 0) + 1;
+          });
+          
+          // Segnala che l'utente ha votato
+          hasVoted = true;
+          votedMessage.style.display = 'block';
         }
+      });
     }
-});
-
-// Funzione per votare
-function vote(option) {
-    if (hasVoted) return;
     
-    get(timerRef).then((snapshot) => {
-        const timerData = snapshot.val();
-        // Verifica che la fase sia 'voting' e che il timer non sia scaduto
-        if (timerData && timerData.phase === 'voting' && 
-            Date.now() - timerData.lastReset < timerData.countdown * 1000) {
-            
-            // Aggiorna il conteggio dei voti usando una transazione
-            const optionRef = ref(database, `votes/${option}`);
-            const totalRef = ref(database, 'votes/totalVotes');
-            
-            transaction(optionRef, (currentVotes) => {
-                return (currentVotes || 0) + 1;
-            });
-            
-            transaction(totalRef, (currentTotal) => {
-                return (currentTotal || 0) + 1;
-            });
-            
-            // Segna l'utente come votante
-            hasVoted = true;
-            votedMessage.style.display = 'block';
-            voteButtons.forEach(button => {
-                button.disabled = true;
-            });
-        }
-    });
-}
-
-// Funzione per resettare la votazione
-function resetVote() {
-    // Resetta il timer nel database
-    update(timerRef, {
-        countdown: 7, // Durata votazione: 7 secondi
-        lastReset: Date.now(),
-        phase: 'voting'
+    // Aggiungi eventi click ai pulsanti di voto
+    document.getElementById('x-button').addEventListener('click', function() {
+      console.log('X button clicked');
+      handleVote('x');
     });
     
-    // Resetta i voti nel database
-    set(voteRef, {
+    document.getElementById('o-button').addEventListener('click', function() {
+      console.log('O button clicked');
+      handleVote('o');
+    });
+    
+    document.getElementById('square-button').addEventListener('click', function() {
+      console.log('Square button clicked');
+      handleVote('square');
+    });
+    
+    document.getElementById('triangle-button').addEventListener('click', function() {
+      console.log('Triangle button clicked');
+      handleVote('triangle');
+    });
+    
+    // Funzione per resettare la votazione
+    function resetVote() {
+      // Aggiorna il database per iniziare un nuovo round di votazione
+      set(voteRef, {
         x: 0,
         o: 0,
         square: 0,
@@ -1313,134 +1352,29 @@ function resetVote() {
         totalVotes: 0,
         votingActive: true,
         lastUpdateTime: Date.now()
-    });
-    
-    // Resetta lo stato locale
-    hasVoted = false;
-    countdown = 7;
-    countdownDisplay.textContent = countdown;
-    timerBar.style.width = '100%';
-    votedMessage.style.display = 'none';
-    popularChoice.style.display = 'none';
-    
-    // Riabilita i pulsanti
-    voteButtons.forEach(button => {
-        button.disabled = false;
-    });
-}
-
-// Gestisci i clic sui pulsanti di voto
-document.getElementById('x-button').addEventListener('click', () => vote('x'));
-document.getElementById('o-button').addEventListener('click', () => vote('o'));
-document.getElementById('square-button').addEventListener('click', () => vote('square'));
-document.getElementById('triangle-button').addEventListener('click', () => vote('triangle'));
-
-// Inizializza il timer quando la pagina si carica
-syncTimer();
-voteTimer = setInterval(() => {
-    syncTimer();
-}, 1000);
-
-}
-
-// Gestisci i clic sui pulsanti di voto
-document.getElementById('x-button').addEventListener('click', () => vote('x'));
-document.getElementById('o-button').addEventListener('click', () => vote('o'));
-document.getElementById('square-button').addEventListener('click', () => vote('square'));
-document.getElementById('triangle-button').addEventListener('click', () => vote('triangle'));
-
-// Inizializza il timer quando la pagina si carica
-voteTimer = setInterval(() => {
-  syncTimer();
-}, 1000);
-
-// Avvia immediatamente la sincronizzazione
-syncTimer();
-
-// Limita la chat a 50 messaggi massimi per evitare sovraccarichi
-function limitChatMessages() {
-  get(chatRef).then((snapshot) => {
-    const messages = snapshot.val();
-    if (messages) {
-      const messageArray = Object.entries(messages);
-      if (messageArray.length > 50) {
-        // Rimuovi i messaggi più vecchi
-        const messagesToRemove = messageArray.slice(0, messageArray.length - 50);
-        messagesToRemove.forEach(([key]) => {
-          const oldMessageRef = ref(database, `chat/${key}`);
-          set(oldMessageRef, null);
-        });
-      }
-    }
-  });
-}
-
-// Esegui la pulizia della chat ogni minuto
-setInterval(limitChatMessages, 60000);
-
-// Assicurati che il mini-sondaggio mostri sempre percentuali corrette (somma 100%)
-function normalizePollPercentages() {
-  get(pollRef).then((snapshot) => {
-    if (snapshot.exists()) {
-      const data = snapshot.val();
-      const total = data.totalVotes;
-      
-      // Calcola le percentuali
-      let connor = Math.round((data.connor / total) * 100);
-      let markus = Math.round((data.markus / total) * 100);
-      let kara = Math.round((data.kara / total) * 100);
-      let altro = Math.round((data.altro / total) * 100);
-      
-      // Correggi la somma se necessario
-      const sum = connor + markus + kara + altro;
-      if (sum !== 100) {
-        // Aggiusta il valore più alto
-        if (sum < 100) {
-          // Trova il più alto e aggiungi la differenza
-          const max = Math.max(connor, markus, kara, altro);
-          if (max === connor) connor += (100 - sum);
-          else if (max === markus) markus += (100 - sum);
-          else if (max === kara) kara += (100 - sum);
-          else altro += (100 - sum);
-        } else {
-          // Trova il più alto e sottrai la differenza
-          const max = Math.max(connor, markus, kara, altro);
-          if (max === connor) connor -= (sum - 100);
-          else if (max === markus) markus -= (sum - 100);
-          else if (max === kara) kara -= (sum - 100);
-          else altro -= (sum - 100);
-        }
-      }
-      
-      // Aggiorna il database con le percentuali corrette
-      update(pollRef, {
-        connor: connor,
-        markus: markus,
-        kara: kara,
-        altro: altro
       });
+      
+      // Reimposta il timer
+      update(timerRef, {
+        countdown: 7,
+        lastReset: Date.now(),
+        phase: 'voting'
+      });
+      
+      // Reimposta lo stato locale
+      hasVoted = false;
+      votedMessage.style.display = 'none';
+      popularChoice.style.display = 'none';
     }
-  });
-}
-
-// Correggi le percentuali del sondaggio all'avvio e periodicamente
-normalizePollPercentages();
-setInterval(normalizePollPercentages, 30000);
-
-// Mostra un messaggio di benvenuto nella chat per i nuovi utenti
-setTimeout(() => {
-  if (chatArea.childElementCount < 3) {
-    // Se ci sono meno di 3 messaggi, aggiungi un messaggio di benvenuto
-    push(chatRef, {
-      username: "Sistema",
-      text: "Benvenuto nella chat di Detroit: Become Human! Puoi discutere del gioco qui.",
-      timestamp: Date.now(),
-      userId: "system"
-    });
+    
+    // Avvia il monitoraggio del timer
+    setInterval(syncTimer, 1000);
+    
+    // Inizializza il timer all'avvio della pagina
+    syncTimer();
+  } else {
+    console.error('Elementi della votazione non trovati');
   }
-}, 3000);
-
-console.log("Script di Detroit: Become Human caricato con successo!");
-    </script>
-</body>
+</script>
+</body>   
 </html>
