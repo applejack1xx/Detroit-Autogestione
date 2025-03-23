@@ -1530,230 +1530,30 @@ footer::before {
     });
   };
   
-  // SCRIPT PER LA VOTAZIONE INTERATTIVA CONDIVISA
-  // Riferimento al database per la votazione
-  const voteRef = ref(database, 'votes');
-  const timerRef = ref(database, 'timer');
-  
-  let countdown = 7; // Durata votazione: 7 secondi
-  const countdownDisplay = document.getElementById('countdown');
-  const timerBar = document.getElementById('timer-bar');
-  const voteButtons = document.querySelectorAll('.button');
-  const votedMessage = document.getElementById('voted-message');
-  const popularChoice = document.getElementById('popular-choice');
-  const choiceSymbol = document.getElementById('choice-symbol');
-  const choicePercentage = document.getElementById('choice-percentage');
-  
-  // Tiene traccia se l'utente ha già votato in questo round
-  let hasVoted = false;
-  
-  // Verifica che gli elementi esistano
-  if (countdownDisplay && timerBar && voteButtons.length > 0 && votedMessage && popularChoice && choiceSymbol && choicePercentage) {
-    // Inizializza i dati di votazione nel database se non esistono
-    get(voteRef).then((snapshot) => {
-      if (!snapshot.exists()) {
-        set(voteRef, {
-          x: 0,
-          o: 0,
-          square: 0,
-          triangle: 0,
-          totalVotes: 0,
-          votingActive: true,
-          lastUpdateTime: Date.now()
-        });
-      }
-    });
-    
-    // Inizializza il timer nel database se non esiste
-    get(timerRef).then((snapshot) => {
-      if (!snapshot.exists()) {
-        set(timerRef, {
-          countdown: 7,
-          lastReset: Date.now(),
-          phase: 'voting' // Nuova proprietà per tenere traccia della fase (voting o results)
-        });
-      }
-    });
-    
-    // Funzione per sincronizzare il timer locale con quello del database
-    function syncTimer() {
-      get(timerRef).then((snapshot) => {
-        const timerData = snapshot.val();
-        if (timerData) {
-          const elapsedTime = Math.floor((Date.now() - timerData.lastReset) / 1000);
-          countdown = Math.max(0, timerData.countdown - elapsedTime);
-          countdownDisplay.textContent = countdown;
-          timerBar.style.width = (countdown / 7 * 100) + '%';
-          
-          // Se il timer è scaduto e siamo in fase di votazione, mostra i risultati
-          if (countdown <= 0 && timerData.phase === 'voting') {
-            // Controlla se siamo i primi a notare che il timer è scaduto
-            if (Date.now() - timerData.lastReset > timerData.countdown * 1000) {
-              // Cambia fase a results e aggiorna il database
-              update(timerRef, {
-                phase: 'results',
-                lastReset: Date.now(),
-                countdown: 1 // Mostra risultati per 3 secondi
-              });
-              
-              // Disattiva la votazione per mostrare i risultati
-              update(voteRef, {
-                votingActive: false
-              });
-            }
-          }
-          // Se il timer è scaduto e siamo in fase di risultati, avvia un nuovo round
-          else if (countdown <= 0 && timerData.phase === 'results') {
-            // Controlla se siamo i primi a notare che il timer è scaduto
-            if (Date.now() - timerData.lastReset > timerData.countdown * 1000) {
-              resetVote();
-            }
-          }
-        }
-      });
-    }
-    
-    // Ascolta i cambiamenti nei risultati della votazione
-    onValue(voteRef, (snapshot) => {
-      const voteData = snapshot.val();
-      if (voteData) {
-        const total = voteData.totalVotes || 1; // Evita divisione per zero
-        
-        // Calcola le percentuali
-        const xPercent = Math.round((voteData.x / total) * 100) || 0;
-        const oPercent = Math.round((voteData.o / total) * 100) || 0;
-        const squarePercent = Math.round((voteData.square / total) * 100) || 0;
-        const trianglePercent = Math.round((voteData.triangle / total) * 100) || 0;
-        
-        // Aggiorna le UI delle percentuali
-        document.getElementById('x-percentage').textContent = xPercent + '%';
-        document.getElementById('o-percentage').textContent = oPercent + '%';
-        document.getElementById('square-percentage').textContent = squarePercent + '%';
-        document.getElementById('triangle-percentage').textContent = trianglePercent + '%';
-        
-        // Aggiorna le barre di progresso
-        document.getElementById('x-progress').style.width = xPercent + '%';
-        document.getElementById('o-progress').style.width = oPercent + '%';
-        document.getElementById('square-progress').style.width = squarePercent + '%';
-        document.getElementById('triangle-progress').style.width = trianglePercent + '%';
-        
-        // Se la votazione non è attiva, mostra il risultato
-        if (!voteData.votingActive) {
-          // Trova l'opzione con la percentuale più alta
-          const results = [
-            { id: 'x', symbol: '✕', percentage: xPercent },
-            { id: 'o', symbol: '○', percentage: oPercent },
-            { id: 'square', symbol: '□', percentage: squarePercent },
-            { id: 'triangle', symbol: '△', percentage: trianglePercent }
-          ];
-          
-          // Sort by percentage (highest first)
-          results.sort((a, b) => b.percentage - a.percentage);
-          
-          // Update the popular choice display
-          choiceSymbol.textContent = results[0].symbol;
-          choicePercentage.textContent = results[0].percentage;
-          popularChoice.style.display = 'block';
-        } else {
-          // If voting is active, hide the results
-          popularChoice.style.display = 'none';
-        }
-      }
-    });
-    
-    // Ascolta i cambiamenti nel timer
-    onValue(timerRef, (snapshot) => {
-      const timerData = snapshot.val();
-      if (timerData) {
-        // Calcola il tempo rimanente
-        const elapsedTime = Math.floor((Date.now() - timerData.lastReset) / 1000);
-        countdown = Math.max(0, timerData.countdown - elapsedTime);
-        
-        // Aggiorna la UI del timer
-        countdownDisplay.textContent = countdown;
-        timerBar.style.width = (countdown / 7 * 100) + '%';
-        
-        // Gestisci le diverse fasi (votazione o mostra risultati)
-        if (timerData.phase === 'voting') {
-          // Abilita i pulsanti di voto
-          voteButtons.forEach(btn => {
-            btn.disabled = false;
-          });
-          
-          // Nascondi il messaggio votato se è un nuovo round
-          if (!hasVoted) {
-            votedMessage.style.display = 'none';
-          }
-          
-          // Nascondi i risultati
-          popularChoice.style.display = 'none';
-        } else if (timerData.phase === 'results') {
-          // Disabilita i pulsanti di voto durante la fase di risultati
-          voteButtons.forEach(btn => {
-            btn.disabled = true;
-          });
-          
-          // Mostra i risultati
-          popularChoice.style.display = 'block';
-        }
-      }
-    });
-    
-    // Funzione per gestire il voto
-    function handleVote(option) {
-      if (hasVoted) return;
-      
-      get(voteRef).then((snapshot) => {
-        const voteData = snapshot.val();
-        
-        if (voteData && voteData.votingActive) {
-          // Usa una transazione per aggiornare il conteggio dei voti in modo atomico
-          const optionRef = ref(database, `votes/${option}`);
-          const totalVotesRef = ref(database, 'votes/totalVotes');
-          
-          runTransaction(optionRef, (currentVotes) => {
-            return (currentVotes || 0) + 1;
-          }).then(() => {
-            console.log(`Voto per ${option} registrato`);
-          }).catch(error => {
-            console.error('Errore durante la transazione:', error);
-          });
-          
-          transaction(totalVotesRef, (currentTotal) => {
-            return (currentTotal || 0) + 1;
-          });
-          
-          // Segnala che l'utente ha votato
-          hasVoted = true;
-          votedMessage.style.display = 'block';
-        }
-      });
-    }
-    
-    // Aggiungi eventi click ai pulsanti di voto
-    document.getElementById('x-button').addEventListener('click', function() {
-      console.log('X button clicked');
-      handleVote('x');
-    });
-    
-    document.getElementById('o-button').addEventListener('click', function() {
-      console.log('O button clicked');
-      handleVote('o');
-    });
-    
-    document.getElementById('square-button').addEventListener('click', function() {
-      console.log('Square button clicked');
-      handleVote('square');
-    });
-    
-    document.getElementById('triangle-button').addEventListener('click', function() {
-      console.log('Triangle button clicked');
-      handleVote('triangle');
-    });
-    
-    // Funzione per resettare la votazione
-    function resetVote() {
-      // Aggiorna il database per iniziare un nuovo round di votazione
+// SCRIPT PER LA VOTAZIONE INTERATTIVA CONDIVISA
+// Riferimento al database per la votazione
+const voteRef = ref(database, 'votes');
+const timerRef = ref(database, 'timer');
+
+let countdown = 7; // Durata votazione: 7 secondi
+const countdownDisplay = document.getElementById('countdown');
+const timerBar = document.getElementById('timer-bar');
+const voteButtons = document.querySelectorAll('.button');
+const votedMessage = document.getElementById('voted-message');
+const popularChoice = document.getElementById('popular-choice');
+const choiceSymbol = document.getElementById('choice-symbol');
+const choicePercentage = document.getElementById('choice-percentage');
+
+// Tiene traccia se l'utente ha già votato in questo round
+let hasVoted = false;
+// Mantieni traccia dell'ID del round corrente per assicurarsi che hasVoted sia relativo al round attuale
+let currentRoundId = null;
+
+// Verifica che gli elementi esistano
+if (countdownDisplay && timerBar && voteButtons.length > 0 && votedMessage && popularChoice && choiceSymbol && choicePercentage) {
+  // Inizializza i dati di votazione nel database se non esistono
+  get(voteRef).then((snapshot) => {
+    if (!snapshot.exists()) {
       set(voteRef, {
         x: 0,
         o: 0,
@@ -1761,30 +1561,244 @@ footer::before {
         triangle: 0,
         totalVotes: 0,
         votingActive: true,
-        lastUpdateTime: Date.now()
+        lastUpdateTime: Date.now(),
+        roundId: Date.now()  // Aggiungi un ID univoco per il round
       });
-      
-      // Reimposta il timer
-      update(timerRef, {
+    }
+  });
+  
+  // Inizializza il timer nel database se non esiste
+  get(timerRef).then((snapshot) => {
+    if (!snapshot.exists()) {
+      set(timerRef, {
         countdown: 7,
         lastReset: Date.now(),
-        phase: 'voting'
+        phase: 'voting' // Nuova proprietà per tenere traccia della fase (voting o results)
       });
-      
-      // Reimposta lo stato locale
-      hasVoted = false;
-      votedMessage.style.display = 'none';
-      popularChoice.style.display = 'none';
     }
-    
-    // Avvia il monitoraggio del timer
-    setInterval(syncTimer, 1000);
-    
-    // Inizializza il timer all'avvio della pagina
-    syncTimer();
-  } else {
-    console.error('Elementi della votazione non trovati');
+  });
+  
+  // Funzione per sincronizzare il timer locale con quello del database
+  function syncTimer() {
+    get(timerRef).then((snapshot) => {
+      const timerData = snapshot.val();
+      if (timerData) {
+        const elapsedTime = Math.floor((Date.now() - timerData.lastReset) / 1000);
+        countdown = Math.max(0, timerData.countdown - elapsedTime);
+        countdownDisplay.textContent = countdown;
+        timerBar.style.width = (countdown / 7 * 100) + '%';
+        
+        // Se il timer è scaduto e siamo in fase di votazione, mostra i risultati
+        if (countdown <= 0 && timerData.phase === 'voting') {
+          // Controlla se siamo i primi a notare che il timer è scaduto
+          if (Date.now() - timerData.lastReset > timerData.countdown * 1000) {
+            // Cambia fase a results e aggiorna il database
+            update(timerRef, {
+              phase: 'results',
+              lastReset: Date.now(),
+              countdown: 3 // Mostra risultati per 3 secondi (era 1 nel codice originale)
+            });
+            
+            // Disattiva la votazione per mostrare i risultati
+            update(voteRef, {
+              votingActive: false
+            });
+          }
+        }
+        // Se il timer è scaduto e siamo in fase di risultati, avvia un nuovo round
+        else if (countdown <= 0 && timerData.phase === 'results') {
+          // Controlla se siamo i primi a notare che il timer è scaduto
+          if (Date.now() - timerData.lastReset > timerData.countdown * 1000) {
+            resetVote();
+          }
+        }
+      }
+    });
   }
+  
+  // Ascolta i cambiamenti nei risultati della votazione
+  onValue(voteRef, (snapshot) => {
+    const voteData = snapshot.val();
+    if (voteData) {
+      // Controlla se è un nuovo round e aggiorna lo stato locale
+      if (currentRoundId !== voteData.roundId) {
+        currentRoundId = voteData.roundId;
+        hasVoted = false; // Resetta hasVoted solo quando cambia il round
+        votedMessage.style.display = 'none';
+      }
+      
+      const total = voteData.totalVotes || 1; // Evita divisione per zero
+      
+      // Calcola le percentuali
+      const xPercent = Math.round((voteData.x / total) * 100) || 0;
+      const oPercent = Math.round((voteData.o / total) * 100) || 0;
+      const squarePercent = Math.round((voteData.square / total) * 100) || 0;
+      const trianglePercent = Math.round((voteData.triangle / total) * 100) || 0;
+      
+      // Aggiorna le UI delle percentuali
+      document.getElementById('x-percentage').textContent = xPercent + '%';
+      document.getElementById('o-percentage').textContent = oPercent + '%';
+      document.getElementById('square-percentage').textContent = squarePercent + '%';
+      document.getElementById('triangle-percentage').textContent = trianglePercent + '%';
+      
+      // Aggiorna le barre di progresso
+      document.getElementById('x-progress').style.width = xPercent + '%';
+      document.getElementById('o-progress').style.width = oPercent + '%';
+      document.getElementById('square-progress').style.width = squarePercent + '%';
+      document.getElementById('triangle-progress').style.width = trianglePercent + '%';
+      
+      // Se la votazione non è attiva, mostra il risultato
+      if (!voteData.votingActive) {
+        // Trova l'opzione con la percentuale più alta
+        const results = [
+          { id: 'x', symbol: '✕', percentage: xPercent },
+          { id: 'o', symbol: '○', percentage: oPercent },
+          { id: 'square', symbol: '□', percentage: squarePercent },
+          { id: 'triangle', symbol: '△', percentage: trianglePercent }
+        ];
+        
+        // Sort by percentage (highest first)
+        results.sort((a, b) => b.percentage - a.percentage);
+        
+        // Update the popular choice display
+        choiceSymbol.textContent = results[0].symbol;
+        choicePercentage.textContent = results[0].percentage;
+        popularChoice.style.display = 'block';
+      } else {
+        // If voting is active, hide the results
+        popularChoice.style.display = 'none';
+      }
+    }
+  });
+  
+  // Ascolta i cambiamenti nel timer
+  onValue(timerRef, (snapshot) => {
+    const timerData = snapshot.val();
+    if (timerData) {
+      // Calcola il tempo rimanente
+      const elapsedTime = Math.floor((Date.now() - timerData.lastReset) / 1000);
+      countdown = Math.max(0, timerData.countdown - elapsedTime);
+      
+      // Aggiorna la UI del timer
+      countdownDisplay.textContent = countdown;
+      timerBar.style.width = (countdown / 7 * 100) + '%';
+      
+      // Gestisci le diverse fasi (votazione o mostra risultati)
+      if (timerData.phase === 'voting') {
+        // Abilita i pulsanti di voto solo se l'utente non ha ancora votato
+        voteButtons.forEach(btn => {
+          btn.disabled = hasVoted;
+        });
+        
+        // Mostra il messaggio votato se l'utente ha già votato
+        votedMessage.style.display = hasVoted ? 'block' : 'none';
+        
+        // Nascondi i risultati
+        popularChoice.style.display = 'none';
+      } else if (timerData.phase === 'results') {
+        // Disabilita i pulsanti di voto durante la fase di risultati
+        voteButtons.forEach(btn => {
+          btn.disabled = true;
+        });
+        
+        // Mostra i risultati
+        popularChoice.style.display = 'block';
+      }
+    }
+  });
+  
+  // Funzione per gestire il voto
+  function handleVote(option) {
+    if (hasVoted) return;
+    
+    get(voteRef).then((snapshot) => {
+      const voteData = snapshot.val();
+      
+      if (voteData && voteData.votingActive) {
+        // Usa una transazione per aggiornare il conteggio dei voti in modo atomico
+        const optionRef = ref(database, `votes/${option}`);
+        const totalVotesRef = ref(database, 'votes/totalVotes');
+        
+        runTransaction(optionRef, (currentVotes) => {
+          return (currentVotes || 0) + 1;
+        }).then(() => {
+          console.log(`Voto per ${option} registrato`);
+        }).catch(error => {
+          console.error('Errore durante la transazione:', error);
+        });
+        
+        transaction(totalVotesRef, (currentTotal) => {
+          return (currentTotal || 0) + 1;
+        });
+        
+        // Segnala che l'utente ha votato
+        hasVoted = true;
+        votedMessage.style.display = 'block';
+        
+        // Disabilita i pulsanti dopo il voto
+        voteButtons.forEach(btn => {
+          btn.disabled = true;
+        });
+      }
+    });
+  }
+  
+  // Aggiungi eventi click ai pulsanti di voto
+  document.getElementById('x-button').addEventListener('click', function() {
+    console.log('X button clicked');
+    handleVote('x');
+  });
+  
+  document.getElementById('o-button').addEventListener('click', function() {
+    console.log('O button clicked');
+    handleVote('o');
+  });
+  
+  document.getElementById('square-button').addEventListener('click', function() {
+    console.log('Square button clicked');
+    handleVote('square');
+  });
+  
+  document.getElementById('triangle-button').addEventListener('click', function() {
+    console.log('Triangle button clicked');
+    handleVote('triangle');
+  });
+  
+  // Funzione per resettare la votazione
+  function resetVote() {
+    // Genera un nuovo ID per il round
+    const newRoundId = Date.now();
+    
+    // Aggiorna il database per iniziare un nuovo round di votazione
+    set(voteRef, {
+      x: 0,
+      o: 0,
+      square: 0,
+      triangle: 0,
+      totalVotes: 0,
+      votingActive: true,
+      lastUpdateTime: Date.now(),
+      roundId: newRoundId // Usa il nuovo ID per il round
+    });
+    
+    // Reimposta il timer
+    update(timerRef, {
+      countdown: 7,
+      lastReset: Date.now(),
+      phase: 'voting'
+    });
+    
+    // Non resettare hasVoted qui, sarà resettato quando il listener del database rileva il nuovo roundId
+  }
+  
+  // Avvia il monitoraggio del timer
+  setInterval(syncTimer, 1000);
+  
+  // Inizializza il timer all'avvio della pagina
+  syncTimer();
+} else {
+  console.error('Elementi della votazione non trovati');
+}
 </script>
 </body>   
 </html>
