@@ -1548,6 +1548,8 @@ const choicePercentage = document.getElementById('choice-percentage');
 let hasVoted = false;
 // Mantieni traccia dell'ID del round corrente per assicurarsi che hasVoted sia relativo al round attuale
 let currentRoundId = null;
+// Aggiungiamo un ID utente unico per limitare i voti
+const userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
 
 // Verifica che gli elementi esistano
 if (countdownDisplay && timerBar && voteButtons.length > 0 && votedMessage && popularChoice && choiceSymbol && choicePercentage) {
@@ -1562,7 +1564,8 @@ if (countdownDisplay && timerBar && voteButtons.length > 0 && votedMessage && po
         totalVotes: 0,
         votingActive: true,
         lastUpdateTime: Date.now(),
-        roundId: Date.now()  // Aggiungi un ID univoco per il round
+        roundId: Date.now(),  // Aggiungi un ID univoco per il round
+        voters: {} // Per tenere traccia di chi ha già votato
       });
     }
   });
@@ -1596,7 +1599,7 @@ if (countdownDisplay && timerBar && voteButtons.length > 0 && votedMessage && po
             update(timerRef, {
               phase: 'results',
               lastReset: Date.now(),
-              countdown: 3 // Mostra risultati per 3 secondi (era 1 nel codice originale)
+              countdown: 1 // Mostra risultati per 1 secondo (modificato da 3)
             });
             
             // Disattiva la votazione per mostrare i risultati
@@ -1616,6 +1619,14 @@ if (countdownDisplay && timerBar && voteButtons.length > 0 && votedMessage && po
     });
   }
   
+  // Verifica se l'utente ha già votato in questo round
+  function checkIfUserVoted(roundId) {
+    return get(ref(database, `votes/voters/${userId}_${roundId}`))
+      .then((snapshot) => {
+        return snapshot.exists();
+      });
+  }
+  
   // Ascolta i cambiamenti nei risultati della votazione
   onValue(voteRef, (snapshot) => {
     const voteData = snapshot.val();
@@ -1623,8 +1634,17 @@ if (countdownDisplay && timerBar && voteButtons.length > 0 && votedMessage && po
       // Controlla se è un nuovo round e aggiorna lo stato locale
       if (currentRoundId !== voteData.roundId) {
         currentRoundId = voteData.roundId;
-        hasVoted = false; // Resetta hasVoted solo quando cambia il round
-        votedMessage.style.display = 'none';
+        
+        // Verifica se l'utente ha già votato in questo nuovo round
+        checkIfUserVoted(currentRoundId).then(voted => {
+          hasVoted = voted;
+          votedMessage.style.display = hasVoted ? 'block' : 'none';
+          
+          // Aggiorna lo stato dei pulsanti
+          voteButtons.forEach(btn => {
+            btn.disabled = hasVoted;
+          });
+        });
       }
       
       const total = voteData.totalVotes || 1; // Evita divisione per zero
@@ -1685,13 +1705,18 @@ if (countdownDisplay && timerBar && voteButtons.length > 0 && votedMessage && po
       
       // Gestisci le diverse fasi (votazione o mostra risultati)
       if (timerData.phase === 'voting') {
-        // Abilita i pulsanti di voto solo se l'utente non ha ancora votato
-        voteButtons.forEach(btn => {
-          btn.disabled = hasVoted;
+        // Verifica se l'utente ha già votato in questo round
+        checkIfUserVoted(currentRoundId).then(voted => {
+          hasVoted = voted;
+          
+          // Abilita i pulsanti di voto solo se l'utente non ha ancora votato
+          voteButtons.forEach(btn => {
+            btn.disabled = hasVoted;
+          });
+          
+          // Mostra il messaggio votato se l'utente ha già votato
+          votedMessage.style.display = hasVoted ? 'block' : 'none';
         });
-        
-        // Mostra il messaggio votato se l'utente ha già votato
-        votedMessage.style.display = hasVoted ? 'block' : 'none';
         
         // Nascondi i risultati
         popularChoice.style.display = 'none';
@@ -1715,29 +1740,40 @@ if (countdownDisplay && timerBar && voteButtons.length > 0 && votedMessage && po
       const voteData = snapshot.val();
       
       if (voteData && voteData.votingActive) {
-        // Usa una transazione per aggiornare il conteggio dei voti in modo atomico
-        const optionRef = ref(database, `votes/${option}`);
-        const totalVotesRef = ref(database, 'votes/totalVotes');
-        
-        runTransaction(optionRef, (currentVotes) => {
-          return (currentVotes || 0) + 1;
-        }).then(() => {
-          console.log(`Voto per ${option} registrato`);
-        }).catch(error => {
-          console.error('Errore durante la transazione:', error);
-        });
-        
-        transaction(totalVotesRef, (currentTotal) => {
-          return (currentTotal || 0) + 1;
-        });
-        
-        // Segnala che l'utente ha votato
-        hasVoted = true;
-        votedMessage.style.display = 'block';
-        
-        // Disabilita i pulsanti dopo il voto
-        voteButtons.forEach(btn => {
-          btn.disabled = true;
+        // Verifica che l'utente non abbia già votato in questo round
+        checkIfUserVoted(voteData.roundId).then(voted => {
+          if (!voted) {
+            // Usa una transazione per aggiornare il conteggio dei voti in modo atomico
+            const optionRef = ref(database, `votes/${option}`);
+            const totalVotesRef = ref(database, 'votes/totalVotes');
+            const voterRef = ref(database, `votes/voters/${userId}_${voteData.roundId}`);
+            
+            // Registra che l'utente ha votato
+            set(voterRef, true);
+            
+            // Incrementa il conteggio per l'opzione scelta
+            runTransaction(optionRef, (currentVotes) => {
+              return (currentVotes || 0) + 1;
+            }).then(() => {
+              console.log(`Voto per ${option} registrato`);
+            }).catch(error => {
+              console.error('Errore durante la transazione:', error);
+            });
+            
+            // Incrementa il conteggio totale
+            transaction(totalVotesRef, (currentTotal) => {
+              return (currentTotal || 0) + 1;
+            });
+            
+            // Segnala che l'utente ha votato
+            hasVoted = true;
+            votedMessage.style.display = 'block';
+            
+            // Disabilita i pulsanti dopo il voto
+            voteButtons.forEach(btn => {
+              btn.disabled = true;
+            });
+          }
         });
       }
     });
@@ -1778,7 +1814,8 @@ if (countdownDisplay && timerBar && voteButtons.length > 0 && votedMessage && po
       totalVotes: 0,
       votingActive: true,
       lastUpdateTime: Date.now(),
-      roundId: newRoundId // Usa il nuovo ID per il round
+      roundId: newRoundId, // Usa il nuovo ID per il round
+      voters: {} // Resetta chi ha votato
     });
     
     // Reimposta il timer
@@ -1788,7 +1825,7 @@ if (countdownDisplay && timerBar && voteButtons.length > 0 && votedMessage && po
       phase: 'voting'
     });
     
-    // Non resettare hasVoted qui, sarà resettato quando il listener del database rileva il nuovo roundId
+    // hasVoted sarà verificato quando il listener rileva il nuovo roundId
   }
   
   // Avvia il monitoraggio del timer
